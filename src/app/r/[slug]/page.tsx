@@ -13,7 +13,7 @@ import {
   getPublicTakenNumbers,
   getPublicWinner,
 } from "@/lib/raffles";
-import { TEXTO_CTA, shareCardUrl } from "@/lib/share";
+import { shareCardUrl } from "@/lib/share";
 import { publicRaffleUrl } from "@/lib/site-url";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -38,9 +38,9 @@ export async function generateMetadata({ params, searchParams }: MetadataProps):
   const description =
     (raffle.description.replace(/\s+/g, " ").trim() ||
       `Participe da rifa ${raffle.title}`).slice(0, 160);
-  // No link do WhatsApp, a prévia usa o card vertical e o CTA como título: o card
-  // vira o botão clicável e a URL não aparece como texto na conversa.
-  const tituloPrevia = peloWhatsapp ? TEXTO_CTA : title;
+  // No link do WhatsApp, a prévia usa o card vertical. O CTA fica na legenda da
+  // mensagem, então o título permanece o da rifa para não duplicá-lo.
+  const tituloPrevia = title;
   const card = peloWhatsapp
     ? {
         url: shareCardUrl(slug, "whatsapp"),

@@ -41,7 +41,7 @@ const NOMES: Record<RedeSocial, string> = {
 
 const INSTRUCOES: Record<RedeSocial, string> = {
   whatsapp:
-    `No celular, o card vertical é enviado como imagem e o link vem junto como prévia clicável, com o texto “${TEXTO_CTA}” e sem mostrar o endereço. No computador, a URL aparece na mensagem; use “Baixar card” se quiser anexar a imagem.`,
+    `No celular, o card vertical é enviado como imagem e a mensagem fica com “${TEXTO_CTA}” seguida do link clicável. No computador, use “Baixar card” para anexar a imagem manualmente.`,
   facebook:
     "Ao colar o link, o Facebook mostra este card. Você também pode publicar a imagem diretamente.",
   instagram:

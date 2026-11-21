@@ -122,21 +122,21 @@ describe("URLs de compartilhamento", () => {
     );
   });
 
-  it("envia a URL sem repetir o CTA como legenda no compartilhamento nativo", () => {
+  it("envia o CTA na legenda e a URL como link no compartilhamento nativo", () => {
     const nativo = compartilhamentoNativo("https://exemplo.test/r/rifa", undefined, 123);
     expect(nativo).toEqual({
       title: "",
-      text: "",
+      text: "Clique aqui para ajudar!",
       url: "https://exemplo.test/r/rifa?wa=123",
     });
   });
 
-  it("anexa o PNG do card junto com a URL quando o arquivo está disponível", () => {
+  it("anexa o PNG do card junto com a legenda e a URL", () => {
     const arquivo = { name: "card.png" } as File;
     const nativo = compartilhamentoNativo("https://exemplo.test/r/rifa", arquivo, 123);
     expect(nativo.files).toEqual([arquivo]);
     expect(nativo.url).toBe("https://exemplo.test/r/rifa?wa=123");
-    expect(nativo.text).toBe("");
+    expect(nativo.text).toBe("Clique aqui para ajudar!");
   });
 
   it("usa o CTA exato e separa a URL no fallback do WhatsApp", () => {

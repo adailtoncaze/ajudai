@@ -52,14 +52,14 @@ export function ctaComLink(url: string, agora = Date.now()) {
 }
 
 /**
- * Payload do compartilhamento nativo: o PNG vai como arquivo e a URL como link.
- * Título e texto vazios evitam que o navegador repita o CTA ou mostre o endereço;
- * o WhatsApp anexa a imagem e gera a prévia clicável a partir da URL.
+ * Payload do compartilhamento nativo: o PNG vai como arquivo e a legenda traz o CTA
+ * seguido do link. Com imagem anexada, o WhatsApp usa essa legenda como texto da
+ * mensagem — incluir a URL é a única forma de manter o link clicável.
  */
 export function compartilhamentoNativo(url: string, arquivo?: File, agora = Date.now()) {
   const dados: ShareData = {
     title: "",
-    text: "",
+    text: TEXTO_CTA,
     url: urlComPartilha(url, agora),
   };
   if (arquivo) dados.files = [arquivo];
