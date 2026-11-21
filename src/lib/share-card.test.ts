@@ -92,22 +92,20 @@ describe("textos do card", () => {
   });
 });
 
-describe("cartela ilustrativa do card", () => {
-  it("usa a grade completa nos cards verticais", () => {
-    for (const rede of ["whatsapp", "instagram"] as const) {
-      const formato = rede === "instagram" ? "story" : "direct";
-      expect(configuracaoCard(rede, formato)!.cartela).toMatchObject({
-        quantidade: 12,
-        colunas: 6,
-      });
-    }
+describe("cartela da home como fundo do card", () => {
+  it("usa a cartela maior nos cards verticais longos", () => {
+    expect(configuracaoCard("whatsapp", "direct")!.fundoCartela.largura).toBeGreaterThan(
+      configuracaoCard("instagram", "direct")!.fundoCartela.largura
+    );
+    expect(configuracaoCard("instagram", "story")!.fundoCartela.largura).toBeGreaterThan(
+      configuracaoCard("instagram", "direct")!.fundoCartela.largura
+    );
   });
 
-  it("usa uma faixa compacta no card horizontal do Facebook", () => {
-    expect(configuracaoCard("facebook", "direct")!.cartela).toMatchObject({
-      quantidade: 8,
-      colunas: 8,
-    });
+  it("usa a cartela menor no card horizontal do Facebook", () => {
+    expect(configuracaoCard("facebook", "direct")!.fundoCartela.largura).toBeLessThan(
+      configuracaoCard("whatsapp", "direct")!.fundoCartela.largura
+    );
   });
 });
 

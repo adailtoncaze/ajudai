@@ -617,16 +617,16 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 ## [x] T35 — Data do sorteio e cartela ilustrativa em todos os cards
 
 **Fazer**
-1. Passar `draw_date` da rifa para o gerador de imagem e exibir a data formatada ao lado da tag do valor, nas quatro variantes (WhatsApp, Facebook, Instagram Direct e Instagram Story).
-2. Reproduzir a cartela ilustrativa da home no card, entre o texto e o rodapé, com os quatro estados de número (livre, selecionado, reservado e pago) e a barra de progresso.
-3. Dimensionar a cartela por formato: grade completa (12 números em 6 colunas) nos cards verticais e faixa compacta (8 números em uma linha) no card horizontal do Facebook; reduzir a descrição nesse formato para preservar o espaçamento.
+1. Passar `draw_date` da rifa para o gerador de imagem e exibir a data formatada em destaque, alinhada à direita do preço e em elemento separado, nas quatro variantes (WhatsApp, Facebook, Instagram Direct e Instagram Story).
+2. Reproduzir a cartela da home — cabeçalho, faixa com coração, progresso, grade de 12 números nos quatro estados e selo de pagamento confirmado — como fundo da área rosa do card, abaixo do texto.
+3. Dimensionar a reprodução por formato: maior nos cards verticais longos, reduzida no Direct e compacta no card horizontal do Facebook.
 4. Ocultar a data quando a rifa não tiver `draw_date`, sem deixar espaço reservado.
-5. Cobrir com testes a formatação da data, as configurações da cartela e a renderização das quatro variantes com e sem data.
+5. Cobrir com testes a formatação da data, as configurações do fundo e a renderização das quatro variantes com e sem data.
 
-**Decisão:** o valor continua sendo calculado no servidor e a data vem de `draw_date` (data prevista, sem horário); `drawn_at` permanece como resultado real e não entra no card. A cartela é decorativa e usa os mesmos números e cores da home, sem dados do comprador.
+**Decisão:** o valor continua sendo calculado no servidor e a data vem de `draw_date` (data prevista, sem horário); `drawn_at` permanece como resultado real e não entra no card. A cartela do fundo é a mesma ilustração da home, em baixa opacidade, e não usa dados do comprador. A data ganha destaque próprio em vez de ficar agrupada à tag do valor.
 
 **Critérios de aceite**
-- A data do sorteio aparece ao lado do valor em todas as imagens de compartilhamento.
-- A cartela da home aparece em todos os cards, com proporções adequadas a cada rede.
+- A data do sorteio aparece em destaque, à direita do preço e separada dele, em todas as imagens de compartilhamento.
+- A cartela da home aparece como fundo da área rosa em todos os cards, com proporções adequadas a cada rede.
 - Rifas sem data não exibem o rótulo "Sorteio".
 - `npm run build`, `npm run lint` e `npm test` passam.

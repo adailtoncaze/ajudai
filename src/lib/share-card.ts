@@ -1,15 +1,13 @@
 import { dateOnly } from "./format";
 import type { FormatoCard, RedeSocial } from "@/lib/share";
 
-export type ConfigCartela = {
-  /** Altura total da faixa ilustrativa. */
-  altura: number;
-  /** Quantidade de números exibidos (copiados da cartela da home). */
-  quantidade: number;
-  /** Números por linha. */
-  colunas: number;
-  tamanhoNumero: number;
-  fonteNumero: number;
+export type CartelaFundo = {
+  /** Largura da reprodução da cartela da home usada como fundo. */
+  largura: number;
+  /** Distância da cartela em relação ao topo do card. */
+  top: number;
+  /** Opacidade: a cartela é um fundo, não compete com o texto. */
+  opacidade: number;
 };
 
 export type ConfigCard = {
@@ -24,8 +22,8 @@ export type ConfigCard = {
   /** Tamanho da imagem do prêmio nos cards verticais. */
   premioImagemTamanho: number;
   premioTituloMax: number;
-  /** Cartela ilustrativa da home, dimensionada para cada formato. */
-  cartela: ConfigCartela;
+  /** Cartela da home em fundo, dimensionada para cada formato. */
+  fundoCartela: CartelaFundo;
   vertical: boolean;
   rotulo: string;
 };
@@ -40,7 +38,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 40,
     premioImagemTamanho: 180,
     premioTituloMax: 50,
-    cartela: { altura: 188, quantidade: 12, colunas: 6, tamanhoNumero: 52, fonteNumero: 22 },
+    fundoCartela: { largura: 820, top: 800, opacidade: 0.14 },
     vertical: true,
     rotulo: "Toque no link para participar",
   },
@@ -49,11 +47,11 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     altura: 630,
     alturaImagem: 0,
     tituloMax: 54,
-    descricaoMax: 200,
+    descricaoMax: 230,
     descricaoFonte: 21,
     premioImagemTamanho: 82,
     premioTituloMax: 42,
-    cartela: { altura: 80, quantidade: 8, colunas: 8, tamanhoNumero: 44, fonteNumero: 17 },
+    fundoCartela: { largura: 460, top: 12, opacidade: 0.16 },
     vertical: false,
     rotulo: "Curta e compartilhe",
   },
@@ -66,7 +64,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 24,
     premioImagemTamanho: 100,
     premioTituloMax: 42,
-    cartela: { altura: 148, quantidade: 12, colunas: 6, tamanhoNumero: 38, fonteNumero: 16 },
+    fundoCartela: { largura: 500, top: 370, opacidade: 0.14 },
     vertical: true,
     rotulo: "Chame no Direct para participar",
   },
@@ -79,7 +77,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 26,
     premioImagemTamanho: 116,
     premioTituloMax: 50,
-    cartela: { altura: 188, quantidade: 12, colunas: 6, tamanhoNumero: 52, fonteNumero: 22 },
+    fundoCartela: { largura: 820, top: 800, opacidade: 0.14 },
     vertical: true,
     rotulo: "Chame no Direct para participar",
   },
