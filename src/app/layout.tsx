@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
+import { urlBaseMetadata } from "@/lib/site-url-config";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,20 +13,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
-function urlBaseMetadata(): string {
-  const configurada = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (configurada && !configurada.includes("localhost") && !configurada.includes("127.0.0.1")) {
-    return configurada.replace(/\/+$/, "");
-  }
-
-  const vercel = process.env.VERCEL_URL?.trim();
-  if (vercel) {
-    return `https://${vercel.replace(/^https?:\/\//, "").replace(/\/+$/, "")}`;
-  }
-
-  return "http://localhost:3000";
-}
 
 export const metadata: Metadata = {
   metadataBase: new URL(urlBaseMetadata()),

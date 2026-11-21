@@ -1,5 +1,6 @@
 import "server-only";
 import { headers } from "next/headers";
+import { siteUrlConfigurada } from "./site-url-config";
 
 function normalizar(url: string) {
   return url.replace(/\/+$/, "");
@@ -10,19 +11,13 @@ function eLocal(url: string) {
 }
 
 /**
- * URL pública da aplicação. Em produção, o host da requisição tem prioridade sobre
- * NEXT_PUBLIC_SITE_URL quando ela não foi configurada (ou ficou como localhost).
+ * URL pública da aplicação. Em produção, usa a variável configurada; se ela não
+ * existir, aproveita o host da requisição (útil em previews e domínios customizados).
  */
 export async function publicSiteUrl(): Promise<string> {
-  const configurada = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-
-  if (configurada && !eLocal(configurada)) {
-    return normalizar(configurada);
-  }
-
-  const vercel = process.env.VERCEL_URL?.trim();
-  if (vercel) {
-    return normalizar(`https://${vercel.replace(/^https?:\/\//, "")}`);
+  const configurada = siteUrlConfigurada();
+  if (configurada) {
+    return configurada;
   }
 
   const cabecalhos = await headers();
@@ -34,7 +29,7 @@ export async function publicSiteUrl(): Promise<string> {
     return normalizar(`${protocolo}://${host}`);
   }
 
-  return normalizar(configurada || "http://localhost:3000");
+  return "http://localhost:3000";
 }
 
 export async function publicRaffleUrl(slug: string): Promise<string> {

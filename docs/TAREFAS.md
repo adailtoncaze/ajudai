@@ -577,7 +577,7 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 2. Aumentar a fonte da descrição para 40px e a imagem do prêmio para 180px apenas no card do WhatsApp.
 3. Enviar no compartilhamento nativo a URL com `?wa=<timestamp>` e `title`/`text` vazios, para o navegador não repetir o CTA como legenda.
 4. Fazer a página reconhecer o parâmetro `wa` e gerar a prévia com o card vertical e o título “Clique aqui para ajudar!” quando o link vier do WhatsApp.
-5. Derivar a URL pública do host da requisição quando `NEXT_PUBLIC_SITE_URL` estiver ausente ou apontando para localhost, corrigindo os links gerados na Vercel.
+5. Derivar a URL pública de `NEXT_PUBLIC_SITE_URL`, `NEXT_SITE_URL` ou `VERCEL_URL`, e usar o host da requisição como último recurso, corrigindo os links gerados na Vercel.
 6. Manter CTA e URL no fallback `wa.me` (necessário quando não há Web Share) e atualizar as instruções/avisos do modal.
 7. Cobrir com testes a configuração do card, a fonte/prêmio maiores e o payload nativo sem legenda.
 
