@@ -12,7 +12,6 @@ import {
 import { baixarImagem, copiarImagem } from "@/lib/clipboard";
 import { configuracaoCard, resumirTexto } from "@/lib/share-card";
 import {
-  TEXTO_CTA,
   compartilhamentoNativo,
   legendaCard,
   shareCardUrl,
@@ -40,8 +39,7 @@ const NOMES: Record<RedeSocial, string> = {
 };
 
 const INSTRUCOES: Record<RedeSocial, string> = {
-  whatsapp:
-    `No celular, o card vertical é enviado como imagem e a mensagem fica com “${TEXTO_CTA}” seguida do link clicável. No computador, use “Baixar card” para anexar a imagem manualmente.`,
+  whatsapp: "",
   facebook:
     "Ao colar o link, o Facebook mostra este card. Você também pode publicar a imagem diretamente.",
   instagram:
@@ -218,7 +216,7 @@ export function ShareButtons({ dados, text }: Props) {
               </button>
             </div>
 
-            <p className="ui-hint mt-2">{INSTRUCOES[redeAtiva]}</p>
+            {INSTRUCOES[redeAtiva] && <p className="ui-hint mt-2">{INSTRUCOES[redeAtiva]}</p>}
 
             {redeAtiva === "instagram" && (
               <div className="mt-4">
