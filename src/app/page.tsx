@@ -10,6 +10,7 @@ import {
   Smartphone,
   Ticket,
 } from "lucide-react";
+import { Logo } from "@/components/logo";
 import { createClient } from "@/lib/supabase/server";
 
 const numeros = [
@@ -64,10 +65,7 @@ export default function Home() {
     <main className="flex-1">
       <section className="ui-container grid gap-14 py-14 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-10 lg:py-24">
         <div className="space-y-7">
-          <p className="ui-eyebrow">
-            <Heart aria-hidden="true" size={16} strokeWidth={2.5} />
-            Rifas beneficentes online
-          </p>
+          <Logo size={28} />
 
           <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-balance sm:text-5xl lg:text-6xl">
             Sua rifa do bem,{" "}

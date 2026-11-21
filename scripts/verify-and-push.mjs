@@ -15,6 +15,7 @@ const arquivos = [
   "package.json",
   "package-lock.json",
   "src/app/entrar/page.tsx",
+  "src/app/page.tsx",
   "src/app/globals.css",
   "src/app/layout.tsx",
   "src/app/privacidade/page.tsx",
