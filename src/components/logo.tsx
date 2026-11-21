@@ -1,5 +1,5 @@
 type Props = {
-  /** Altura da logo em px; a largura mantém a proporção original 431:104. */
+  /** Altura da logo em px; a largura é arredondada para um pixel inteiro. */
   size?: number;
   className?: string;
 };
@@ -9,7 +9,9 @@ type Props = {
  * Cores mapeadas para os tokens do tema, sem valores fixos.
  */
 export function Logo({ size = 40, className }: Props) {
-  const largura = (size * 431) / 104;
+  // Largura inteira evita escala fracionária (subpixel), que causa serrilhado
+  // em telas desktop 1x. A proporção 431:104 é mantida por arredondamento.
+  const largura = Math.round((size * 431) / 104);
 
   return (
     <svg
@@ -17,6 +19,8 @@ export function Logo({ size = 40, className }: Props) {
       width={largura}
       height={size}
       viewBox="0 0 431 104"
+      preserveAspectRatio="xMidYMid meet"
+      shapeRendering="geometricPrecision"
       fill="none"
       role="img"
       aria-label="Ajudaí"

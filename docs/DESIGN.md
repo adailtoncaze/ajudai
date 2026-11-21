@@ -46,7 +46,7 @@ A referência também usa azul-marinho/roxo (`#181830` / `#A8A8F0`) em uma seç�
 ### Marca (logo)
 
 - Componente único: `src/components/logo.tsx` — SVG da marca **Ajudaí**: bilhete de rifa com coração e o nome ao lado. O bilhete usa `brand-600` / `accent-500`, os detalhes em `surface` e a wordmark em `ink-900`.
-- `size` define a **altura** em px; a largura mantém a proporção 431:104. Usar na barra lateral (32 px), no rodapé e nas páginas (28 a 40 px) e nos estados vazios (48 a 56 px). Não inventar outro ícone para representar a marca.
+- `size` define a **altura** em px; a largura é arredondada para um pixel inteiro para evitar serrilhado em telas 1x, mantendo a proporção 431:104. Usar na barra lateral (32 px), no rodapé e nas páginas (28 a 40 px) e nos estados vazios (48 a 56 px). Não inventar outro ícone para representar a marca.
 - O menu lateral contém apenas "Minhas rifas"; a action "Nova rifa" fica no botão da página, não no menu.
 
 ### Formas e profundidade

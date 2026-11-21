@@ -141,7 +141,7 @@ async function ConteudoRifa({ params }: Props) {
               />
             ) : (
               <div className="flex h-64 w-full items-center justify-center rounded-2xl border border-line-soft bg-surface sm:h-80 lg:h-96">
-                <Logo size={56} className="max-w-full" />
+                <Logo size={56} className="h-auto max-w-full" />
               </div>
             )}
           </div>
