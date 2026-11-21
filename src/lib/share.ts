@@ -66,9 +66,16 @@ export function compartilhamentoNativo(url: string, arquivo?: File, agora = Date
   return dados;
 }
 
-/** Compartilhamento de imagem pura, usado no Story do Instagram. */
-export function compartilhamentoImagem(arquivo: File): ShareData {
-  return { files: [arquivo] };
+/**
+ * O Web Share com arquivo abre o Instagram como mensagem (Direct), não como Story.
+ * Este deep link abre diretamente a câmera de Stories do app no celular.
+ */
+export function linkStoryInstagram(userAgent: string): string {
+  if (/iPhone|iPad|iPod/i.test(userAgent)) return "instagram://story-camera";
+  if (/Android/i.test(userAgent)) {
+    return "intent://story-camera#Intent;package=com.instagram.android;scheme=instagram;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.instagram.android;end";
+  }
+  return "https://www.instagram.com/";
 }
 
 /** Marca o link para a prévia usar o card quadrado do Direct do Instagram. */

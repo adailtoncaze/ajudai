@@ -12,10 +12,10 @@ import {
 import { baixarImagem, copiarTexto } from "@/lib/clipboard";
 import { configuracaoCard, resumirTexto } from "@/lib/share-card";
 import {
-  compartilhamentoImagem,
   compartilhamentoLink,
   compartilhamentoNativo,
   legendaCard,
+  linkStoryInstagram,
   shareCardUrl,
   shareLinks,
   urlComCardDirect,
@@ -46,7 +46,7 @@ const INSTRUCOES: Record<RedeSocial, string> = {
   facebook:
     "Ao colar o link, o Facebook mostra este card. Você também pode publicar a imagem diretamente.",
   instagram:
-    "Escolha Story ou Direct e toque em compartilhar. No Story, o link também é copiado para o adesivo de link.",
+    "Story abre a câmera do Instagram com o card salvo e o link copiado. Direct envia o card como prévia do link na mensagem.",
 };
 
 function IconeRede({ rede, tamanho = 18 }: { rede: RedeSocial; tamanho?: number }) {
@@ -164,34 +164,38 @@ export function ShareButtons({ dados, text }: Props) {
   async function compartilharInstagram() {
     setAviso("");
 
-    if (typeof navigator === "undefined" || typeof navigator.share !== "function") {
-      setAviso("Seu navegador não oferece compartilhamento. Baixe o card para publicar no Instagram.");
-      return;
-    }
-
-    try {
-      if (formato === "direct") {
-        await navigator.share(compartilhamentoLink(urlComCardDirect(dados.url)));
-        setAviso("Escolha o Instagram e envie no Direct: o card vai como prévia do link.");
+    if (formato === "direct") {
+      if (typeof navigator === "undefined" || typeof navigator.share !== "function") {
+        setAviso("Seu navegador não oferece compartilhamento. Baixe o card para enviar no Direct.");
         return;
       }
 
-      setPreparandoCard(true);
-      const arquivo = arquivoCardRef.current ?? (await buscarArquivoCard());
-      arquivoCardRef.current = arquivo;
-      const suportaArquivo =
-        typeof navigator.canShare !== "function" || navigator.canShare({ files: [arquivo] });
-      if (!suportaArquivo) throw new Error("arquivo_nao_suportado");
+      try {
+        await navigator.share(compartilhamentoLink(urlComCardDirect(dados.url)));
+        setAviso("Escolha o Instagram e envie no Direct: o card vai como prévia do link.");
+      } catch (erro) {
+        if ((erro as { name?: string })?.name === "AbortError") return;
+        setAviso("Não foi possível abrir o compartilhamento. Baixe o card para enviar no Direct.");
+      }
+      return;
+    }
 
-      // Cópia dispara junto com o clique, antes da chamada de compartilhamento.
-      void copiarTexto(dados.url);
-      await navigator.share(compartilhamentoImagem(arquivo));
-      setAviso("Escolha o Instagram para o Story e cole o link no adesivo de link.");
-    } catch (erro) {
-      if ((erro as { name?: string })?.name === "AbortError") return;
-      setAviso("Não foi possível compartilhar. Baixe o card para publicar no Instagram.");
-    } finally {
-      setPreparandoCard(false);
+    // O Web Share com imagem sempre abre o Direct; para o Story usamos o deep link
+    // da câmera, com o card salvo e o endereço pronto para o adesivo de link.
+    try {
+      await copiarTexto(dados.url);
+      baixarImagem(cardUrl, nomeArquivo);
+      const destino = linkStoryInstagram(navigator.userAgent);
+      if (destino.startsWith("https://")) {
+        window.open(destino, "_blank", "noopener,noreferrer");
+      } else {
+        window.location.href = destino;
+      }
+      setAviso(
+        "Card salvo e link copiado. Na câmera de Stories, escolha o card na galeria e cole o link no adesivo."
+      );
+    } catch {
+      setAviso("Não foi possível copiar o link. Use “Baixar card” para publicar no Story.");
     }
   }
 
@@ -326,7 +330,7 @@ export function ShareButtons({ dados, text }: Props) {
                     ? "Preparando card..."
                     : formato === "direct"
                       ? "Compartilhar no Direct"
-                      : "Compartilhar no Story"}
+                      : "Abrir câmera do Story"}
                 </button>
               )}
 

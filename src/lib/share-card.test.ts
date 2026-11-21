@@ -2,11 +2,11 @@ import { describe, expect, it } from "vitest";
 import { configuracaoCard, descricaoParaCard, resumirTexto } from "./share-card";
 import {
   TEXTO_CTA,
-  compartilhamentoImagem,
   compartilhamentoLink,
   compartilhamentoNativo,
   ctaComLink,
   legendaCard,
+  linkStoryInstagram,
   shareCardUrl,
   shareLinks,
   textoComLink,
@@ -143,9 +143,16 @@ describe("URLs de compartilhamento", () => {
     expect(nativo.text).toBe("Clique aqui para ajudar!");
   });
 
-  it("compartilha apenas a imagem no Story do Instagram", () => {
-    const arquivo = { name: "card.png" } as File;
-    expect(compartilhamentoImagem(arquivo)).toEqual({ files: [arquivo] });
+  it("abre a câmera de Stories do Instagram no celular, sem passar pelo Direct", () => {
+    expect(linkStoryInstagram("Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)")).toBe(
+      "instagram://story-camera"
+    );
+    const android = linkStoryInstagram("Mozilla/5.0 (Linux; Android 15) Chrome/130");
+    expect(android).toContain("intent://story-camera#Intent;");
+    expect(android).toContain("package=com.instagram.android");
+    expect(linkStoryInstagram("Mozilla/5.0 (Windows NT 10.0)")).toBe(
+      "https://www.instagram.com/"
+    );
   });
 
   it("monta o link com o marcador do card do Direct e abre a folha nativa", () => {

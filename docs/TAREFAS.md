@@ -579,16 +579,16 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 4. Fazer a página reconhecer o parâmetro `wa` e gerar a prévia com o card vertical quando o link vier do WhatsApp, mantendo o título da rifa para não duplicar o CTA da legenda.
 5. Derivar a URL pública de `NEXT_PUBLIC_SITE_URL`, `NEXT_SITE_URL` ou `VERCEL_URL`, e usar o host da requisição como último recurso, corrigindo os links gerados na Vercel.
 6. Manter CTA e URL no fallback `wa.me` (necessário quando não há Web Share) e atualizar as instruções/avisos do modal.
-7. No Instagram, usar `navigator.share` com o PNG nos formatos Story (9:16) e Direct (1:1), mantendo somente a opção de baixar o card como alternativa.
-8. No Direct, voltar ao `navigator.share` com a URL `?ig=direct`, abrindo a folha nativa para escolher o Direct. A tentativa de copiar e abrir o compositor foi revertida a pedido. No Story, manter `navigator.share` com o PNG e copiar a URL para o adesivo de link; o formato padrão ao abrir o modal é Story, para não cair no Direct por engano.
+7. No Instagram, manter os formatos Story (9:16) e Direct (1:1) e apenas a opção de baixar o card como alternativa; o Story passou a abrir a câmera do app por não ser possível escolher "Story" na folha de compartilhamento do sistema.
+8. No Direct, manter o `navigator.share` com a URL `?ig=direct`, abrindo a folha nativa para escolher o Direct. No Story, não usar folha de compartilhamento (o Instagram tratava a imagem como mensagem/Direct): salvar o card, copiar a URL para o adesivo de link e abrir a câmera de Stories via `instagram://story-camera` (iOS) ou `intent://story-camera#Intent;package=com.instagram.android;...` (Android). O formato padrão ao abrir o modal é Story.
 9. Cobrir com testes a configuração do card, a fonte/prêmio maiores e os payloads de compartilhamento.
 
-**Decisão:** o WhatsApp não permite anexar imagem e, ao mesmo tempo, esconder a URL mantendo o link clicável. Com `files` + `url`, a URL aparece como texto; sem `files`, o card vira prévia clicável mas não é enviado como mídia. Após validação no celular, optou-se por priorizar imagem + link funcional: a legenda traz o CTA e a URL visível (clicável). No Instagram, o feed não permite link clicável na legenda. No Direct, o `navigator.share` com URL gera a prévia do card quadrado (o endereço pode aparecer como texto, comportamento do app). No Story, o PNG vai via `navigator.share` e a URL é copiada para o adesivo de link.
+**Decisão:** o WhatsApp não permite anexar imagem e, ao mesmo tempo, esconder a URL mantendo o link clicável. Com `files` + `url`, a URL aparece como texto; sem `files`, o card vira prévia clicável mas não é enviado como mídia. Após validação no celular, optou-se por priorizar imagem + link funcional: a legenda traz o CTA e a URL visível (clicável). No Instagram, o feed não permite link clicável na legenda. No Direct, o `navigator.share` com URL gera a prévia do card quadrado (o endereço pode aparecer como texto, comportamento do app). No Story, o `navigator.share` com PNG abria o Direct porque a folha do sistema trata a imagem como mensagem; por isso o fluxo abre a câmera de Stories do app, com o card salvo na galeria e a URL copiada para o adesivo de link.
 
 **Critérios de aceite**
 - O card do WhatsApp é vertical (1080x1920), com descrição em 40px e imagem do prêmio em 180px.
 - No celular, a mensagem traz o card vertical como imagem e a legenda “Clique aqui para ajudar!” seguida da URL clicável.
 - Os links gerados na Vercel usam o domínio hospedado, não localhost.
 - No fallback `wa.me`, CTA e URL continuam presentes para abrir a rifa.
-- No Instagram, os formatos são Story (1080x1920) e Direct (1080x1080), com Story como padrão; ambos usam `navigator.share`, e no Story a URL é copiada para o adesivo de link.
+- No Instagram, os formatos são Story (1080x1920) e Direct (1080x1080), com Story como padrão; o Direct usa `navigator.share` com o link, e o Story abre a câmera do app com o card salvo e a URL copiada para o adesivo de link.
 - `npm run build`, `npm run lint` e `npm test` passam.
