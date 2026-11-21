@@ -65,10 +65,10 @@ export default function Home() {
     <main className="flex-1">
       <section className="ui-container grid gap-14 py-14 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-10 lg:py-24">
         <div className="space-y-7">
-          <Logo size={28} />
+          <Logo size={48} />
 
           <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-balance sm:text-5xl lg:text-6xl">
-            Sua rifa do bem,{" "}
+            Sua plataforma de rifa do bem,{" "}
             <span className="text-brand-800">pronta para compartilhar.</span>
           </h1>
 
