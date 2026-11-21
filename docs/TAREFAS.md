@@ -575,7 +575,7 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 **Fazer**
 1. Manter o card do WhatsApp vertical (1080x1920) e reduzir a imagem do topo para 780px, liberando espaço para texto e prêmio.
 2. Aumentar a fonte da descrição para 40px e a imagem do prêmio para 180px apenas no card do WhatsApp.
-3. Enviar no compartilhamento nativo a URL com `?wa=<timestamp>` e `title`/`text` vazios, para o navegador não repetir o CTA como legenda.
+3. Enviar no compartilhamento nativo o PNG como arquivo **e** a URL com `?wa=<timestamp>`, com `title`/`text` vazios, para anexar a imagem e gerar a prévia clicável sem repetir o CTA como legenda.
 4. Fazer a página reconhecer o parâmetro `wa` e gerar a prévia com o card vertical e o título “Clique aqui para ajudar!” quando o link vier do WhatsApp.
 5. Derivar a URL pública de `NEXT_PUBLIC_SITE_URL`, `NEXT_SITE_URL` ou `VERCEL_URL`, e usar o host da requisição como último recurso, corrigindo os links gerados na Vercel.
 6. Manter CTA e URL no fallback `wa.me` (necessário quando não há Web Share) e atualizar as instruções/avisos do modal.
@@ -585,7 +585,7 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 
 **Critérios de aceite**
 - O card do WhatsApp é vertical (1080x1920), com descrição em 40px e imagem do prêmio em 180px.
-- No celular, a mensagem mostra uma única ocorrência do CTA, na prévia clicável do card, sem URL visível.
+- No celular, a mensagem traz o card vertical como imagem e uma única ocorrência do CTA, na prévia clicável, sem URL visível.
 - Os links gerados na Vercel usam o domínio hospedado, não localhost.
 - No fallback `wa.me`, CTA e URL continuam presentes para abrir a rifa.
 - `npm run build`, `npm run lint` e `npm test` passam.
