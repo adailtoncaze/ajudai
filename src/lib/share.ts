@@ -77,11 +77,6 @@ export function urlComCardDirect(url: string) {
   return `${url}${separador}ig=direct`;
 }
 
-/** Compartilhamento somente com o link: o app gera a prévia clicável, sem URL crua. */
-export function compartilhamentoLink(url: string): ShareData {
-  return { title: "", text: "", url };
-}
-
 /** Texto da mensagem: legenda, chamada para ação e URL clicável. */
 export function textoComLink(url: string, legenda = "", agora = Date.now()) {
   const link = urlComPartilha(url, agora);

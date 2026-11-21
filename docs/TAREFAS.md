@@ -580,15 +580,15 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 5. Derivar a URL pública de `NEXT_PUBLIC_SITE_URL`, `NEXT_SITE_URL` ou `VERCEL_URL`, e usar o host da requisição como último recurso, corrigindo os links gerados na Vercel.
 6. Manter CTA e URL no fallback `wa.me` (necessário quando não há Web Share) e atualizar as instruções/avisos do modal.
 7. No Instagram, usar `navigator.share` com o PNG nos formatos Story (9:16) e Direct (1:1), mantendo somente a opção de baixar o card como alternativa.
-8. No Direct, compartilhar somente a URL com `?ig=direct` — a prévia vira o card clicável e o endereço não aparece como texto; com arquivo anexado o Instagram mostrava a URL crua. No Story, copiar a URL para o adesivo de link.
+8. No Direct, copiar a URL com `?ig=direct` e abrir o compositor do Direct: o Instagram gera só a prévia clicável. Tanto com arquivo quanto com `navigator.share`, o app enviava a URL como texto ao lado da prévia. No Story, manter `navigator.share` com o PNG e copiar a URL para o adesivo de link.
 9. Cobrir com testes a configuração do card, a fonte/prêmio maiores e os payloads de compartilhamento.
 
-**Decisão:** o WhatsApp não permite anexar imagem e, ao mesmo tempo, esconder a URL mantendo o link clicável. Com `files` + `url`, a URL aparece como texto; sem `files`, o card vira prévia clicável mas não é enviado como mídia. Após validação no celular, optou-se por priorizar imagem + link funcional: a legenda traz o CTA e a URL visível (clicável). No Instagram, o feed não permite link clicável na legenda; no Direct, compartilhar imagem + URL faz o app exibir a URL crua além da prévia, então o compartilhamento envia só o link e a prévia usa o card quadrado. No Story, a URL é copiada para o adesivo de link.
+**Decisão:** o WhatsApp não permite anexar imagem e, ao mesmo tempo, esconder a URL mantendo o link clicável. Com `files` + `url`, a URL aparece como texto; sem `files`, o card vira prévia clicável mas não é enviado como mídia. Após validação no celular, optou-se por priorizar imagem + link funcional: a legenda traz o CTA e a URL visível (clicável). No Instagram, o feed não permite link clicável na legenda. No Direct, qualquer compartilhamento via `navigator.share` (com ou sem arquivo) entrega a URL como texto, e o app mostra prévia + endereço; por isso o fluxo copia o link e abre o compositor, onde a colagem gera apenas a prévia do card quadrado. No Story, a URL é copiada para o adesivo de link.
 
 **Critérios de aceite**
 - O card do WhatsApp é vertical (1080x1920), com descrição em 40px e imagem do prêmio em 180px.
 - No celular, a mensagem traz o card vertical como imagem e a legenda “Clique aqui para ajudar!” seguida da URL clicável.
 - Os links gerados na Vercel usam o domínio hospedado, não localhost.
 - No fallback `wa.me`, CTA e URL continuam presentes para abrir a rifa.
-- No Instagram, os formatos são Story (1080x1920) e Direct (1080x1080); no Direct só o link é compartilhado e a prévia clicável usa o card quadrado, sem URL visível; no Story a URL é copiada para o adesivo de link.
+- No Instagram, os formatos são Story (1080x1920) e Direct (1080x1080); no Direct o link é copiado e o compositor é aberto, gerando só a prévia clicável do card quadrado; no Story a imagem vai via `navigator.share` e a URL é copiada para o adesivo de link.
 - `npm run build`, `npm run lint` e `npm test` passam.
