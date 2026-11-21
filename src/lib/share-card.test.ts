@@ -3,6 +3,7 @@ import { configuracaoCard, descricaoParaCard, resumirTexto } from "./share-card"
 import {
   TEXTO_CTA,
   compartilhamentoImagem,
+  compartilhamentoLink,
   compartilhamentoNativo,
   ctaComLink,
   legendaCard,
@@ -147,13 +148,13 @@ describe("URLs de compartilhamento", () => {
     expect(compartilhamentoImagem(arquivo)).toEqual({ files: [arquivo] });
   });
 
-  it("monta o link com o marcador do card do Direct", () => {
-    expect(urlComCardDirect("https://exemplo.test/r/rifa")).toBe(
-      "https://exemplo.test/r/rifa?ig=direct"
-    );
+  it("monta o link com o marcador do card do Direct e abre a folha nativa", () => {
+    const url = urlComCardDirect("https://exemplo.test/r/rifa");
+    expect(url).toBe("https://exemplo.test/r/rifa?ig=direct");
     expect(urlComCardDirect("https://exemplo.test/r/rifa?wa=123")).toBe(
       "https://exemplo.test/r/rifa?wa=123&ig=direct"
     );
+    expect(compartilhamentoLink(url)).toEqual({ title: "", text: "", url });
   });
 
   it("usa o CTA exato e separa a URL no fallback do WhatsApp", () => {

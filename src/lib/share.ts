@@ -77,6 +77,11 @@ export function urlComCardDirect(url: string) {
   return `${url}${separador}ig=direct`;
 }
 
+/** Compartilhamento nativo do link: abre a folha do sistema com o card como prévia. */
+export function compartilhamentoLink(url: string): ShareData {
+  return { title: "", text: "", url };
+}
+
 /** Texto da mensagem: legenda, chamada para ação e URL clicável. */
 export function textoComLink(url: string, legenda = "", agora = Date.now()) {
   const link = urlComPartilha(url, agora);

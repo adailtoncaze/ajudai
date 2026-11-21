@@ -13,6 +13,7 @@ import { baixarImagem, copiarTexto } from "@/lib/clipboard";
 import { configuracaoCard, resumirTexto } from "@/lib/share-card";
 import {
   compartilhamentoImagem,
+  compartilhamentoLink,
   compartilhamentoNativo,
   legendaCard,
   shareCardUrl,
@@ -45,7 +46,7 @@ const INSTRUCOES: Record<RedeSocial, string> = {
   facebook:
     "Ao colar o link, o Facebook mostra este card. Você também pode publicar a imagem diretamente.",
   instagram:
-    "No Direct, o link é copiado e o compositor é aberto: cole para enviar só o card clicável. No Story, use o adesivo de link com o endereço copiado.",
+    "Escolha Story ou Direct e toque em compartilhar. No Story, o link também é copiado para o adesivo de link.",
 };
 
 function IconeRede({ rede, tamanho = 18 }: { rede: RedeSocial; tamanho?: number }) {
@@ -56,7 +57,7 @@ function IconeRede({ rede, tamanho = 18 }: { rede: RedeSocial; tamanho?: number 
 
 export function ShareButtons({ dados, text }: Props) {
   const [redeAtiva, setRedeAtiva] = useState<RedeSocial | null>(null);
-  const [formato, setFormato] = useState<FormatoCard>("direct");
+  const [formato, setFormato] = useState<FormatoCard>("story");
   const [aviso, setAviso] = useState("");
   const [preparandoCard, setPreparandoCard] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -105,7 +106,7 @@ export function ShareButtons({ dados, text }: Props) {
 
   function abrir(rede: RedeSocial) {
     setRedeAtiva(rede);
-    setFormato("direct");
+    setFormato("story");
     setAviso("");
     arquivoCardRef.current = null;
     setPreparandoCard(rede === "whatsapp" || rede === "instagram");
@@ -163,25 +164,18 @@ export function ShareButtons({ dados, text }: Props) {
   async function compartilharInstagram() {
     setAviso("");
 
-    if (formato === "direct") {
-      // O Web Share envia a URL como texto; no Direct isso gera prévia + endereço.
-      // Copiar e colar no compositor do app faz o Instagram mostrar só a prévia.
-      try {
-        await copiarTexto(urlComCardDirect(dados.url));
-        window.open("https://www.instagram.com/direct/new/", "_blank", "noopener,noreferrer");
-        setAviso("Link copiado. Cole no Direct: o Instagram envia só o card clicável.");
-      } catch {
-        setAviso("Não foi possível copiar o link. Use “Baixar card” para publicar.");
-      }
-      return;
-    }
-
     if (typeof navigator === "undefined" || typeof navigator.share !== "function") {
       setAviso("Seu navegador não oferece compartilhamento. Baixe o card para publicar no Instagram.");
       return;
     }
 
     try {
+      if (formato === "direct") {
+        await navigator.share(compartilhamentoLink(urlComCardDirect(dados.url)));
+        setAviso("Escolha o Instagram e envie no Direct: o card vai como prévia do link.");
+        return;
+      }
+
       setPreparandoCard(true);
       const arquivo = arquivoCardRef.current ?? (await buscarArquivoCard());
       arquivoCardRef.current = arquivo;
@@ -331,7 +325,7 @@ export function ShareButtons({ dados, text }: Props) {
                   {preparandoCard
                     ? "Preparando card..."
                     : formato === "direct"
-                      ? "Abrir Direct com link copiado"
+                      ? "Compartilhar no Direct"
                       : "Compartilhar no Story"}
                 </button>
               )}
