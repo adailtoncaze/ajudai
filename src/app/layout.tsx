@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
-import { publicSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,17 +13,29 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  return {
-    metadataBase: new URL(await publicSiteUrl()),
-    title: {
-      default: "Rifa Solidária",
-      template: "%s | Rifa Solidária",
-    },
-    description: "Rifas beneficentes online com pagamento por Pix.",
-    applicationName: "Rifa Solidária",
-  };
+function urlBaseMetadata(): string {
+  const configurada = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (configurada && !configurada.includes("localhost") && !configurada.includes("127.0.0.1")) {
+    return configurada.replace(/\/+$/, "");
+  }
+
+  const vercel = process.env.VERCEL_URL?.trim();
+  if (vercel) {
+    return `https://${vercel.replace(/^https?:\/\//, "").replace(/\/+$/, "")}`;
+  }
+
+  return "http://localhost:3000";
 }
+
+export const metadata: Metadata = {
+  metadataBase: new URL(urlBaseMetadata()),
+  title: {
+    default: "Rifa Solidária",
+    template: "%s | Rifa Solidária",
+  },
+  description: "Rifas beneficentes online com pagamento por Pix.",
+  applicationName: "Rifa Solidária",
+};
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

@@ -20,6 +20,11 @@ export async function publicSiteUrl(): Promise<string> {
     return normalizar(configurada);
   }
 
+  const vercel = process.env.VERCEL_URL?.trim();
+  if (vercel) {
+    return normalizar(`https://${vercel.replace(/^https?:\/\//, "")}`);
+  }
+
   const cabecalhos = await headers();
   const host = cabecalhos.get("x-forwarded-host") ?? cabecalhos.get("host");
   const protocolo =
