@@ -25,6 +25,7 @@ const COR = {
   laranjaForte: "#D6411A",
   laranjaVivo: "#F04E23",
   verde: "#1B744E",
+  menta: "#3EDA94",
   linha: "#7C8791",
   borda: "#DCE1E6",
 };
@@ -483,9 +484,60 @@ function RodapeValor({
   );
 }
 
-/** Borda inferior discreta com uma linha de números da cartela da home. */
+/** Bilhete da logo antiga, com o número da cartela no lugar da perfuração central. */
+function Bilhete({
+  numero,
+  estado,
+  tamanho,
+  fonte,
+}: {
+  numero: string;
+  estado: (typeof NUMEROS_CARTELA)[number]["estado"];
+  tamanho: number;
+  fonte: number;
+}) {
+  const corNumero = ESTILOS_NUMERO[estado].texto;
+  return (
+    <div style={{ display: "flex", position: "relative", width: tamanho, height: tamanho }}>
+      <div style={{ display: "flex", position: "absolute", top: 0, left: 0, width: tamanho, height: tamanho }}>
+        <svg width={tamanho} height={tamanho} viewBox="0 0 24 24" fill="none">
+          <path
+            d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"
+            fill={COR.superficie}
+            stroke={COR.linha}
+            strokeWidth={1.4}
+          />
+          <path
+            d="M17 7v2 M17 11v2 M17 15v2"
+            stroke={COR.menta}
+            strokeWidth={1.6}
+            strokeLinecap="round"
+          />
+        </svg>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+          height: "100%",
+          alignItems: "center",
+          justifyContent: "center",
+          paddingRight: tamanho * 0.22,
+          color: corNumero,
+          fontSize: fonte,
+          fontWeight: 800,
+        }}
+      >
+        {numero}
+      </div>
+    </div>
+  );
+}
+
+/** Borda inferior discreta com bilhetes da cartela da home ocupando toda a largura. */
 function BordaCartela({ config }: { config: ConfigCard }) {
   const { altura, tamanhoNumero, fonteNumero, opacidade } = config.bordaCartela;
+  const quantidade = Math.ceil(config.largura / (tamanhoNumero + 7));
 
   return (
     <div
@@ -498,36 +550,23 @@ function BordaCartela({ config }: { config: ConfigCard }) {
         height: altura,
         boxSizing: "border-box",
         alignItems: "center",
-        justifyContent: "center",
+        padding: "0 10px",
         backgroundColor: COR.superficie,
         borderTop: `2px solid ${COR.borda}`,
         opacity: opacidade,
       }}
     >
-      <div style={{ display: "flex" }}>
-        {NUMEROS_CARTELA.map((numero, indice) => {
-          const estilo = ESTILOS_NUMERO[numero.estado];
+      <div style={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
+        {Array.from({ length: quantidade }, (_, indice) => {
+          const numero = NUMEROS_CARTELA[indice % NUMEROS_CARTELA.length];
           return (
-            <div
-              key={numero.valor}
-              style={{
-                width: tamanhoNumero,
-                height: tamanhoNumero,
-                boxSizing: "border-box",
-                marginRight: indice < NUMEROS_CARTELA.length - 1 ? 8 : 0,
-                borderRadius: 10,
-                border: `2px solid ${estilo.borda}`,
-                backgroundColor: estilo.fundo,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: estilo.texto,
-                fontSize: fonteNumero,
-                fontWeight: 800,
-              }}
-            >
-              {numero.valor}
-            </div>
+            <Bilhete
+              key={indice}
+              numero={numero.valor}
+              estado={numero.estado}
+              tamanho={tamanhoNumero}
+              fonte={fonteNumero}
+            />
           );
         })}
       </div>

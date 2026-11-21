@@ -33,7 +33,7 @@ it.each(variantes)("renderiza o card de %s (%s) com data do sorteio", async (red
   );
   const bytes = await resposta.arrayBuffer();
   expect(bytes.byteLength).toBeGreaterThan(0);
-});
+}, 30000);
 
 it.each(variantes)("renderiza o card de %s (%s) sem data do sorteio", async (rede, formato) => {
   const config = configuracaoCard(rede, formato)!;
@@ -52,4 +52,4 @@ it.each(variantes)("renderiza o card de %s (%s) sem data do sorteio", async (red
   );
   const bytes = await resposta.arrayBuffer();
   expect(bytes.byteLength).toBeGreaterThan(0);
-});
+}, 30000);

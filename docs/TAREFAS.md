@@ -619,7 +619,7 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 **Fazer**
 1. Passar `draw_date` da rifa para o gerador de imagem e exibir `Sorteio <data>` na mesma linha, dentro do selo verde, nas quatro variantes (WhatsApp, Facebook, Instagram Direct e Instagram Story).
 2. Manter o selo da data e a tag do preço com a mesma altura e alinhados na mesma linha.
-3. Substituir o fundo ilustrado por uma borda inferior discreta com uma linha dos números da cartela da home, dimensionada por formato (maior nos verticais longos, compacta no Facebook).
+3. Substituir o fundo ilustrado por uma borda inferior discreta com uma linha de bilhetes no formato da logo antiga, cada um com um número da cartela da home, repetidos para ocupar toda a largura do card e dimensionados por formato.
 4. Ocultar a data quando a rifa não tiver `draw_date`, sem deixar espaço reservado.
 5. Cobrir com testes a formatação da data, as configurações da borda e a renderização das quatro variantes com e sem data.
 
@@ -627,6 +627,6 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 
 **Critérios de aceite**
 - O selo verde traz "Sorteio" e a data na mesma linha, com a mesma altura do preço e na mesma linha dele, em todas as imagens de compartilhamento.
-- A borda inferior mostra uma linha de números da cartela da home, discreta e proporcional a cada rede.
+- A borda inferior mostra uma linha de bilhetes com números da cartela da home, discreta, proporcional a cada rede e ocupando toda a largura do card.
 - Rifas sem data não exibem o selo de sorteio.
 - `npm run build`, `npm run lint` e `npm test` passam.
