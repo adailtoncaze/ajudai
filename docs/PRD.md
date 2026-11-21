@@ -1,4 +1,4 @@
-# PRD — Rifa Solidária (v1.0)
+# PRD — Ajudaí (v1.0)
 
 ## 1. Visão
 

@@ -17,11 +17,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(urlBaseMetadata()),
   title: {
-    default: "Rifa Solidária",
-    template: "%s | Rifa Solidária",
+    default: "Ajudaí",
+    template: "%s | Ajudaí",
   },
   description: "Rifas beneficentes online com pagamento por Pix.",
-  applicationName: "Rifa Solidária",
+  applicationName: "Ajudaí",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

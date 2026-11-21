@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Heart, ShieldCheck, Ticket } from "lucide-react";
 import { AuthForm } from "@/components/auth-form";
+import { Logo } from "@/components/logo";
 
 export const metadata: Metadata = {
   title: "Entrar",
@@ -18,9 +19,9 @@ export default function EntrarPage() {
               <Heart aria-hidden="true" size={24} />
             </span>
             <div>
-              <p className="text-sm font-bold uppercase tracking-widest text-white">
-                Rifa Solidária
-              </p>
+              <span className="inline-flex w-fit rounded-[var(--radius-control)] bg-surface px-3 py-2">
+                <Logo size={32} />
+              </span>
               <h2 className="mt-2 text-3xl font-extrabold leading-tight tracking-tight">
                 Sua rifa do bem começa aqui.
               </h2>

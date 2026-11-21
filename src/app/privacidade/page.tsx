@@ -4,7 +4,7 @@ import { ArrowLeft, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Privacidade",
-  description: "Entenda quais dados a Rifa Solidária coleta, para quê e quem pode vê-los.",
+  description: "Entenda quais dados são coletados no Ajudaí, para quê e quem pode vê-los.",
 };
 
 export default function PrivacidadePage() {

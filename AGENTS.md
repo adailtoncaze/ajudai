@@ -1,4 +1,4 @@
-# AGENTS.md — Rifa Solidária (nome provisório)
+# AGENTS.md — Ajudaí
 
 Aplicação web para **rifas beneficentes online**. O organizador cadastra a rifa (descrição, imagem, quantidade de números, preço). O comprador abre o link, escolhe um ou mais números, informa nome e sobrenome e paga por **Pix (QR Code estático)**. O organizador confirma os pagamentos **manualmente**.
 
@@ -25,7 +25,10 @@ npm run dev        # desenvolvimento
 npm run build      # build de produção (deve passar sem erros)
 npm run lint       # lint
 npm test           # vitest
+npm run check      # build + lint + test; se passarem, commita e faz push
 ```
+
+`npm run check` commita apenas os arquivos declarados em `scripts/verify-and-push.mjs` e aceita uma mensagem personalizada após `--`.
 
 ## Estrutura de pastas
 

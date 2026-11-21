@@ -1,4 +1,4 @@
-# DESIGN SYSTEM — Rifa Solidária
+# DESIGN SYSTEM — Ajudaí
 
 Fonte de referência: [Landing Page UX/UI — Rifa](https://www.behance.net/gallery/187038003/Landing-Page-UXUI-Rifa), Daniel Mota (dezembro de 2023). A arte foi usada como direção visual: paleta alegre e confiável, superfícies arredondadas, bilhete/números como elemento gráfico central e chamadas de ação bem evidentes. As cores da arte foram mantidas; o fundo rosado foi substituído por **cinza claro** e a área autenticada passou a usar um **dashboard com barra lateral**, conforme decisão de produto.
 
@@ -45,8 +45,8 @@ A referência também usa azul-marinho/roxo (`#181830` / `#A8A8F0`) em uma seç�
 
 ### Marca (logo)
 
-- Componente único: `src/components/logo.tsx` — SVG do **bilhete de rifa** com perfuração em menta, nos tokens `brand-600` / `accent-500`.
-- Usar na barra lateral (40 px) e nos estados vazios (48 px). Não inventar outro ícone para representar a marca.
+- Componente único: `src/components/logo.tsx` — SVG da marca **Ajudaí**: bilhete de rifa com coração e o nome ao lado. O bilhete usa `brand-600` / `accent-500`, os detalhes em `surface` e a wordmark em `ink-900`.
+- `size` define a **altura** em px; a largura mantém a proporção 431:104. Usar na barra lateral (32 px), no rodapé e nas páginas (28 a 40 px) e nos estados vazios (48 a 56 px). Não inventar outro ícone para representar a marca.
 - O menu lateral contém apenas "Minhas rifas"; a action "Nova rifa" fica no botão da página, não no menu.
 
 ### Formas e profundidade

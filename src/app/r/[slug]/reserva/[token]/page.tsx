@@ -68,10 +68,10 @@ async function Conteudo({ params }: Props) {
         <Link
           href={linkRifa}
           aria-label={`${reserva.raffle.title} — voltar para a rifa`}
-          className="inline-flex items-center gap-3"
+          className="inline-flex min-w-0 items-center gap-3"
         >
-          <Logo size={40} />
-          <span className="text-base font-extrabold tracking-tight text-ink-900 sm:text-lg">
+          <Logo size={32} className="shrink-0" />
+          <span className="truncate text-base font-extrabold tracking-tight text-ink-900 sm:text-lg">
             {reserva.raffle.title}
           </span>
         </Link>

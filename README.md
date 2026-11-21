@@ -1,4 +1,4 @@
-# Rifa Solidária
+# Ajudaí
 
 Aplicação web para rifas beneficentes online. Veja `docs/PRD.md`, `docs/SPEC.md`, `docs/TAREFAS.md` e `docs/DESIGN.md` (design system — toda tela nova deve segui-lo).
 
@@ -17,6 +17,15 @@ npm run build
 npm run lint
 npm test
 ```
+
+Para validar e publicar de uma vez:
+
+```bash
+npm run check                       # build + lint + test, commit e push se tudo passar
+npm run check -- "feat: nova marca" # mensagem de commit personalizada
+```
+
+O commit inclui apenas os arquivos listados em `scripts/verify-and-push.mjs`; alterações pendentes fora dessa lista permanecem no seu working tree.
 
 ## Contas de organizadores
 

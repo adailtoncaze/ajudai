@@ -1,4 +1,4 @@
-# TAREFAS — Rifa Solidária
+# TAREFAS — Ajudaí
 
 ## Como usar com o opencode
 
@@ -330,7 +330,7 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 ## [x] T18 — Logo única e menu enxuto
 
 **Fazer**
-1. Criar `src/components/logo.tsx` com o bilhete de rifa (SVG com os tokens do tema) e usá-la no estado vazio da lista e ao lado de "Rifa Solidária" na barra lateral.
+1. Criar `src/components/logo.tsx` com a marca Ajudaí (bilhete de rifa com coração e nome, SVG com os tokens do tema) e usá-la no estado vazio da lista e na barra lateral.
 2. Remover "Nova rifa" do menu lateral, mantendo apenas o botão existente na página "Minhas rifas".
 
 **Critérios de aceite**
@@ -591,4 +591,23 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 - Os links gerados na Vercel usam o domínio hospedado, não localhost.
 - No fallback `wa.me`, CTA e URL continuam presentes para abrir a rifa.
 - No Instagram, os formatos são Story (1080x1920) e Direct (1080x1080), com Story como padrão; o Direct usa `navigator.share` com o link, e o Story abre `instagram.com/create/story` com o card salvo e a URL copiada para o adesivo de link. O botão principal do modal se chama “Compartilha no instagram”.
+- `npm run build`, `npm run lint` e `npm test` passam.
+
+---
+
+## [x] T34 — Abrir o compartilhamento do Instagram no modo Story
+
+**Fazer**
+1. Substituir o link do modo Story por um botão que aciona o compartilhamento nativo (`navigator.share`) com o PNG vertical do card e o CTA com a URL da rifa.
+2. Manter a cópia do link para o adesivo da Story e usar `navigator.canShare` antes de enviar o arquivo; `title` vazio para evitar erro no Safari/iOS.
+3. No computador, ou quando o navegador não aceita arquivo, salvar o card e abrir o criador oficial de Stories com o link copiado, mantendo o aviso com as instruções.
+4. Não abrir o fallback quando a pessoa cancela a folha de compartilhamento (`AbortError`).
+5. Atualizar a instrução do modal e cobrir com testes os payloads e a detecção de dispositivo/suporte a arquivo.
+
+**Decisão:** o link universal `instagram.com/create/story/` sozinho não abria o fluxo de compartilhamento — no desktop caía no login do Instagram e no celular não anexava o card. A folha nativa é a única forma, sem um App ID do Facebook, de entregar a imagem a um app de terceiros; nela a pessoa escolhe Instagram e Story. O link oficial continua como fallback para quem não tem Web Share com arquivo.
+
+**Critérios de aceite**
+- No celular, ao selecionar Story e clicar em compartilhar, abre a folha do sistema com o card do modo Story; ao escolher Instagram, o fluxo de Story é iniciado com o link copiado para o adesivo.
+- No desktop ou sem suporte a arquivo, o card é salvo, o link copiado e o criador de Stories é aberto, com aviso em `role="status"`.
+- Cancelar a folha não muda a página nem mostra aviso de erro.
 - `npm run build`, `npm run lint` e `npm test` passam.

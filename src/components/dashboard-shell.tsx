@@ -41,12 +41,9 @@ export function DashboardShell({ children, userInfo }: Props) {
         aria-label="Menu do organizador"
         className={`ui-dashboard-sidebar flex flex-col ${menuAberto ? "ui-dashboard-sidebar-open" : ""}`}
       >
-        <div className="flex h-16 items-center gap-3 border-b border-line-soft px-5">
-          <Logo size={40} className="shrink-0" />
-          <div>
-            <p className="text-base font-extrabold leading-tight text-ink-900">Rifa Solidária</p>
-            <p className="ui-caption">Área do organizador</p>
-          </div>
+        <div className="flex h-16 flex-col justify-center gap-1 border-b border-line-soft px-5">
+          <Logo size={32} />
+          <p className="ui-caption">Área do organizador</p>
         </div>
 
         <div className="flex-1">
@@ -78,7 +75,7 @@ export function DashboardShell({ children, userInfo }: Props) {
             {menuAberto ? <X aria-hidden="true" size={20} /> : <Menu aria-hidden="true" size={20} />}
             <span className="sr-only">{menuAberto ? "Fechar menu" : "Abrir menu"}</span>
           </button>
-          <p className="text-base font-extrabold text-ink-900 lg:hidden">Rifa Solidária</p>
+          <Logo size={28} className="lg:hidden" />
           <p className="ui-caption hidden sm:block">
             Gerencie suas rifas e pagamentos em um só lugar.
           </p>

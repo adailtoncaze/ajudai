@@ -76,7 +76,7 @@ export async function generateMetadata({ params, searchParams }: MetadataProps):
       url: `/r/${slug}`,
       type: "website",
       locale: "pt_BR",
-      siteName: "Rifa Solidária",
+      siteName: "Ajudaí",
       images,
     },
     twitter: {
@@ -119,11 +119,8 @@ async function ConteudoRifa({ params }: Props) {
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <header className="flex items-center justify-between gap-3">
-        <Link href="/" aria-label="Rifa Solidária — página inicial" className="inline-flex items-center gap-3">
+        <Link href="/" aria-label="Ajudaí — página inicial" className="inline-flex items-center">
           <Logo size={40} />
-          <span className="text-base font-extrabold tracking-tight text-ink-900 sm:text-lg">
-            Rifa Solidária
-          </span>
         </Link>
         <Selo status={raffle.status} />
       </header>
@@ -144,7 +141,7 @@ async function ConteudoRifa({ params }: Props) {
               />
             ) : (
               <div className="flex h-64 w-full items-center justify-center rounded-2xl border border-line-soft bg-surface sm:h-80 lg:h-96">
-                <Logo size={80} />
+                <Logo size={56} className="max-w-full" />
               </div>
             )}
           </div>
