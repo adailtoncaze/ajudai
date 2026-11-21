@@ -9,7 +9,6 @@ const arquivos = [
   "AGENTS.md",
   "README.md",
   "scripts/verify-and-push.mjs",
-  "scripts/limpar-dados-teste.mjs",
   "docs/DESIGN.md",
   "docs/PRD.md",
   "docs/TAREFAS.md",

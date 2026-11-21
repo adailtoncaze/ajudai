@@ -65,14 +65,3 @@ Se não houver Docker/ambiente local, use a Opção 1.
 ## Variáveis de ambiente
 
 Copie `.env.example` para `.env.local`. `SUPABASE_SERVICE_ROLE_KEY` e `IP_HASH_SALT` são **somente do servidor** e não devem aparecer em arquivos enviados ao navegador.
-
-## Limpar dados de teste
-
-O script abaixo apaga **todas as rifas do projeto** (reservas e números em cascata) e **todas as imagens** do bucket `raffle-images`. Usuários do Auth **não** são removidos.
-
-```bash
-npm run limpar:teste                       # simulação: mostra contagens, não apaga nada
-npm run limpar:teste -- --confirmar=REF    # executa a limpeza
-```
-
-`REF` é o ref do projeto exibido na simulação (por exemplo, `abcdefghijklmnop`). A confirmação por ref evita limpar o projeto errado.
