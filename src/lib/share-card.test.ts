@@ -3,13 +3,14 @@ import { configuracaoCard, descricaoParaCard, resumirTexto } from "./share-card"
 import {
   TEXTO_CTA,
   compartilhamentoImagem,
-  compartilhamentoImagemComLink,
+  compartilhamentoLink,
   compartilhamentoNativo,
   ctaComLink,
   legendaCard,
   shareCardUrl,
   shareLinks,
   textoComLink,
+  urlComCardDirect,
   whatsappShareLink,
 } from "./share";
 
@@ -147,13 +148,13 @@ describe("URLs de compartilhamento", () => {
     expect(compartilhamentoImagem(arquivo)).toEqual({ files: [arquivo] });
   });
 
-  it("leva imagem e link clicável no Direct do Instagram", () => {
-    const arquivo = { name: "card.png" } as File;
-    expect(compartilhamentoImagemComLink(arquivo, "https://exemplo.test/r/rifa")).toEqual({
-      text: "Clique aqui para ajudar!",
-      url: "https://exemplo.test/r/rifa",
-      files: [arquivo],
-    });
+  it("envia só o link no Direct, sem legenda nem arquivo, para evitar URL visível", () => {
+    const url = urlComCardDirect("https://exemplo.test/r/rifa");
+    expect(url).toBe("https://exemplo.test/r/rifa?ig=direct");
+    expect(compartilhamentoLink(url)).toEqual({ title: "", text: "", url });
+    expect(urlComCardDirect("https://exemplo.test/r/rifa?wa=123")).toBe(
+      "https://exemplo.test/r/rifa?wa=123&ig=direct"
+    );
   });
 
   it("usa o CTA exato e separa a URL no fallback do WhatsApp", () => {

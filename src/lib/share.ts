@@ -71,9 +71,15 @@ export function compartilhamentoImagem(arquivo: File): ShareData {
   return { files: [arquivo] };
 }
 
-/** Imagem mais link clicável na mensagem: usado no Direct do Instagram. */
-export function compartilhamentoImagemComLink(arquivo: File, url: string): ShareData {
-  return { text: TEXTO_CTA, url, files: [arquivo] };
+/** Marca o link para a prévia usar o card quadrado do Direct do Instagram. */
+export function urlComCardDirect(url: string) {
+  const separador = url.includes("?") ? "&" : "?";
+  return `${url}${separador}ig=direct`;
+}
+
+/** Compartilhamento somente com o link: o app gera a prévia clicável, sem URL crua. */
+export function compartilhamentoLink(url: string): ShareData {
+  return { title: "", text: "", url };
 }
 
 /** Texto da mensagem: legenda, chamada para ação e URL clicável. */

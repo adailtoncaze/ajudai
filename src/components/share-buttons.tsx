@@ -13,11 +13,12 @@ import { baixarImagem, copiarTexto } from "@/lib/clipboard";
 import { configuracaoCard, resumirTexto } from "@/lib/share-card";
 import {
   compartilhamentoImagem,
-  compartilhamentoImagemComLink,
+  compartilhamentoLink,
   compartilhamentoNativo,
   legendaCard,
   shareCardUrl,
   shareLinks,
+  urlComCardDirect,
   whatsappShareLink,
   type FormatoCard,
   type RedeSocial,
@@ -45,7 +46,7 @@ const INSTRUCOES: Record<RedeSocial, string> = {
   facebook:
     "Ao colar o link, o Facebook mostra este card. Você também pode publicar a imagem diretamente.",
   instagram:
-    "No Direct, o link vai junto na mensagem e fica clicável. No Story, o link é copiado para você colar no adesivo de link.",
+    "No Direct, o card clicável é enviado como prévia do link, sem mostrar o endereço. No Story, o link é copiado para você colar no adesivo de link.",
 };
 
 function IconeRede({ rede, tamanho = 18 }: { rede: RedeSocial; tamanho?: number }) {
@@ -168,23 +169,25 @@ export function ShareButtons({ dados, text }: Props) {
       return;
     }
 
-    setPreparandoCard(true);
     try {
+      if (formato === "direct") {
+        // Só a URL: com arquivo anexado, o Instagram mostra o endereço como texto.
+        await navigator.share(compartilhamentoLink(urlComCardDirect(dados.url)));
+        setAviso("Escolha o Instagram e envie no Direct: o card clicável vai como prévia.");
+        return;
+      }
+
+      setPreparandoCard(true);
       const arquivo = arquivoCardRef.current ?? (await buscarArquivoCard());
       arquivoCardRef.current = arquivo;
       const suportaArquivo =
         typeof navigator.canShare !== "function" || navigator.canShare({ files: [arquivo] });
       if (!suportaArquivo) throw new Error("arquivo_nao_suportado");
 
-      if (formato === "direct") {
-        await navigator.share(compartilhamentoImagemComLink(arquivo, dados.url));
-        setAviso("Escolha o Instagram e envie no Direct: o card e o link vão juntos.");
-      } else {
-        // Cópia dispara junto com o clique, antes da chamada de compartilhamento.
-        void copiarTexto(dados.url);
-        await navigator.share(compartilhamentoImagem(arquivo));
-        setAviso("Escolha o Instagram para o Story e cole o link no adesivo de link.");
-      }
+      // Cópia dispara junto com o clique, antes da chamada de compartilhamento.
+      void copiarTexto(dados.url);
+      await navigator.share(compartilhamentoImagem(arquivo));
+      setAviso("Escolha o Instagram para o Story e cole o link no adesivo de link.");
     } catch (erro) {
       if ((erro as { name?: string })?.name === "AbortError") return;
       setAviso("Não foi possível compartilhar. Baixe o card para publicar no Instagram.");

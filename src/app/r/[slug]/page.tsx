@@ -27,9 +27,10 @@ const carregarRifa = cache(getPublicRaffle);
 export async function generateMetadata({ params, searchParams }: MetadataProps): Promise<Metadata> {
   const { slug } = await params;
   const busca = await searchParams;
-  // O link compartilhado no WhatsApp leva ?wa=<timestamp>. Nesse caso a prévia usa
-  // o card vertical; o CTA fica na legenda da mensagem, então o título é o da rifa.
+  // O link do WhatsApp (?wa) e do Direct (?ig=direct) pedem cards próprios na prévia.
+  // O CTA fica na legenda/nativa da mensagem, então o título continua sendo o da rifa.
   const peloWhatsapp = busca.wa !== undefined;
+  const peloDirect = busca.ig === "direct";
   const raffle = await carregarRifa(slug);
 
   if (!raffle) return { title: "Rifa não encontrada" };
@@ -38,8 +39,7 @@ export async function generateMetadata({ params, searchParams }: MetadataProps):
   const description =
     (raffle.description.replace(/\s+/g, " ").trim() ||
       `Participe da rifa ${raffle.title}`).slice(0, 160);
-  // No link do WhatsApp, a prévia usa o card vertical. O CTA fica na legenda da
-  // mensagem, então o título permanece o da rifa para não duplicá-lo.
+  // O CTA fica na mensagem, então o título permanece o da rifa para não duplicá-lo.
   const tituloPrevia = title;
   const card = peloWhatsapp
     ? {
@@ -48,12 +48,19 @@ export async function generateMetadata({ params, searchParams }: MetadataProps):
         height: 1920,
         alt: `Card da rifa ${title}`,
       }
-    : {
-        url: shareCardUrl(slug, "facebook"),
-        width: 1200,
-        height: 630,
-        alt: `Card da rifa ${title}`,
-      };
+    : peloDirect
+      ? {
+          url: shareCardUrl(slug, "instagram", "direct"),
+          width: 1080,
+          height: 1080,
+          alt: `Card da rifa ${title}`,
+        }
+      : {
+          url: shareCardUrl(slug, "facebook"),
+          width: 1200,
+          height: 630,
+          alt: `Card da rifa ${title}`,
+        };
   const images = [
     card,
     ...(raffle.image_url ? [{ url: raffle.image_url, width: 1200, height: 630 }] : []),
