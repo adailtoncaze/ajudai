@@ -1,7 +1,7 @@
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { ImageResponse } from "next/og";
 import { configuracaoCard, descricaoParaCard, resumirTexto } from "./share-card";
-import { elementoCard } from "./share-card-image";
+import { CORES_BILHETE, elementoCard, numerosAleatorios } from "./share-card-image";
 
 const variantes = [
   ["whatsapp", "direct"],
@@ -53,3 +53,31 @@ it.each(variantes)("renderiza o card de %s (%s) sem data do sorteio", async (red
   const bytes = await resposta.arrayBuffer();
   expect(bytes.byteLength).toBeGreaterThan(0);
 }, 30000);
+
+describe("bilhetes da borda inferior", () => {
+  it("gera números aleatórios, únicos e formatados com dois dígitos", () => {
+    const numeros = numerosAleatorios(30);
+    const sequencial = Array.from({ length: 30 }, (_, indice) =>
+      String(indice + 1).padStart(2, "0")
+    );
+
+    expect(numeros).toHaveLength(30);
+    expect(new Set(numeros).size).toBe(30);
+    expect(numeros.every((numero) => /^\d{2}$/.test(numero))).toBe(true);
+    expect(numeros).not.toEqual(sequencial);
+  });
+
+  it("mantém a sequência estável entre renderizações", () => {
+    expect(numerosAleatorios(12)).toEqual(numerosAleatorios(12));
+  });
+
+  it("alterna cores do tema no preenchimento dos bilhetes", () => {
+    expect(CORES_BILHETE).toEqual([
+      "#FFFFFF",
+      "#FFF1EC",
+      "#EAFCF3",
+      "#FFE0D5",
+      "#D0F7E5",
+    ]);
+  });
+});

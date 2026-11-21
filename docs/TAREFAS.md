@@ -619,14 +619,14 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 **Fazer**
 1. Passar `draw_date` da rifa para o gerador de imagem e exibir `Sorteio <data>` na mesma linha, dentro do selo verde, nas quatro variantes (WhatsApp, Facebook, Instagram Direct e Instagram Story).
 2. Manter o selo da data e a tag do preço com a mesma altura e alinhados na mesma linha.
-3. Substituir o fundo ilustrado por uma borda inferior discreta com uma linha de bilhetes no formato da logo antiga, cada um com um número da cartela da home, repetidos para ocupar toda a largura do card e dimensionados por formato.
+3. Substituir o fundo ilustrado por uma borda inferior discreta com uma linha de bilhetes no formato da logo antiga, preenchidos com números aleatórios (sem repetição) e cores do tema alternadas, repetidos para ocupar toda a largura do card e dimensionados por formato.
 4. Ocultar a data quando a rifa não tiver `draw_date`, sem deixar espaço reservado.
-5. Cobrir com testes a formatação da data, as configurações da borda e a renderização das quatro variantes com e sem data.
+5. Cobrir com testes a formatação da data, as configurações da borda, a sequência aleatória estável, as cores alternadas e a renderização das quatro variantes com e sem data.
 
-**Decisão:** o valor continua sendo calculado no servidor e a data vem de `draw_date` (data prevista, sem horário); `drawn_at` permanece como resultado real e não entra no card. A borda usa os mesmos números e estados da cartela da home, em baixa opacidade, sem dados do comprador.
+**Decisão:** o valor continua sendo calculado no servidor e a data vem de `draw_date` (data prevista, sem horário); `drawn_at` permanece como resultado real e não entra no card. A borda é decorativa: os números vêm de uma sequência pseudoaleatória estável (para não mudar entre gerações/caches) e o preenchimento alterna tokens do tema, sem dados do comprador.
 
 **Critérios de aceite**
 - O selo verde traz "Sorteio" e a data na mesma linha, com a mesma altura do preço e na mesma linha dele, em todas as imagens de compartilhamento.
-- A borda inferior mostra uma linha de bilhetes com números da cartela da home, discreta, proporcional a cada rede e ocupando toda a largura do card.
+- A borda inferior mostra uma linha de bilhetes com números aleatórios e cores do tema alternadas, discreta, proporcional a cada rede e ocupando toda a largura do card.
 - Rifas sem data não exibem o selo de sorteio.
 - `npm run build`, `npm run lint` e `npm test` passam.

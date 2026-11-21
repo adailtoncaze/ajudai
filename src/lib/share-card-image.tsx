@@ -28,34 +28,34 @@ const COR = {
   menta: "#3EDA94",
   linha: "#7C8791",
   borda: "#DCE1E6",
+  brand100: "#FFE0D5",
+  accent50: "#EAFCF3",
+  accent100: "#D0F7E5",
 };
 
 // Preço e data precisam ter exatamente a mesma altura para ficarem alinhados.
 const ALTURA_VALOR = { vertical: 98, horizontal: 78 } as const;
 
-// Números da cartela da home, usados na borda inferior do card.
-// Mantém as quatro semânticas da grade pública (livre, selecionado, reservado, pago).
-const NUMEROS_CARTELA = [
-  { valor: "07", estado: "pago" },
-  { valor: "12", estado: "selecionado" },
-  { valor: "18", estado: "livre" },
-  { valor: "23", estado: "livre" },
-  { valor: "31", estado: "reservado" },
-  { valor: "42", estado: "livre" },
-  { valor: "56", estado: "pago" },
-  { valor: "63", estado: "livre" },
-  { valor: "78", estado: "livre" },
-  { valor: "85", estado: "reservado" },
-  { valor: "91", estado: "livre" },
-  { valor: "99", estado: "livre" },
-] as const;
+// Tokens do tema alternados no preenchimento dos bilhetes da borda.
+export const CORES_BILHETE = [
+  COR.superficie,
+  COR.fundo,
+  COR.accent50,
+  COR.brand100,
+  COR.accent100,
+];
 
-const ESTILOS_NUMERO = {
-  livre: { fundo: COR.superficie, borda: COR.linha, texto: COR.titulo },
-  selecionado: { fundo: COR.laranjaForte, borda: COR.laranjaForte, texto: COR.superficie },
-  reservado: { fundo: COR.superficieMuda, borda: COR.linha, texto: COR.textoSuave },
-  pago: { fundo: COR.verde, borda: COR.verde, texto: COR.superficie },
-} as const;
+/** Números em ordem aleatória, mas estáveis entre requisições (cache e OG). */
+export function numerosAleatorios(quantidade: number): string[] {
+  let semente = 20261121;
+  const numeros = Array.from({ length: 99 }, (_, indice) => String(indice + 1).padStart(2, "0"));
+  for (let i = numeros.length - 1; i > 0; i--) {
+    semente = (semente * 1664525 + 1013904223) >>> 0;
+    const troca = semente % (i + 1);
+    [numeros[i], numeros[troca]] = [numeros[troca], numeros[i]];
+  }
+  return numeros.slice(0, quantidade);
+}
 
 function Imagem({
   src,
@@ -484,26 +484,25 @@ function RodapeValor({
   );
 }
 
-/** Bilhete da logo antiga, com o número da cartela no lugar da perfuração central. */
+/** Bilhete da logo antiga, com um número aleatório e preenchimento alternado. */
 function Bilhete({
   numero,
-  estado,
+  corFundo,
   tamanho,
   fonte,
 }: {
   numero: string;
-  estado: (typeof NUMEROS_CARTELA)[number]["estado"];
+  corFundo: string;
   tamanho: number;
   fonte: number;
 }) {
-  const corNumero = ESTILOS_NUMERO[estado].texto;
   return (
     <div style={{ display: "flex", position: "relative", width: tamanho, height: tamanho }}>
       <div style={{ display: "flex", position: "absolute", top: 0, left: 0, width: tamanho, height: tamanho }}>
         <svg width={tamanho} height={tamanho} viewBox="0 0 24 24" fill="none">
           <path
             d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"
-            fill={COR.superficie}
+            fill={corFundo}
             stroke={COR.linha}
             strokeWidth={1.4}
           />
@@ -523,7 +522,7 @@ function Bilhete({
           alignItems: "center",
           justifyContent: "center",
           paddingRight: tamanho * 0.22,
-          color: corNumero,
+          color: COR.laranja,
           fontSize: fonte,
           fontWeight: 800,
         }}
@@ -534,10 +533,11 @@ function Bilhete({
   );
 }
 
-/** Borda inferior discreta com bilhetes da cartela da home ocupando toda a largura. */
+/** Borda inferior discreta com bilhetes ocupando toda a largura do card. */
 function BordaCartela({ config }: { config: ConfigCard }) {
   const { altura, tamanhoNumero, fonteNumero, opacidade } = config.bordaCartela;
   const quantidade = Math.ceil(config.largura / (tamanhoNumero + 7));
+  const numeros = numerosAleatorios(quantidade);
 
   return (
     <div
@@ -557,18 +557,15 @@ function BordaCartela({ config }: { config: ConfigCard }) {
       }}
     >
       <div style={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
-        {Array.from({ length: quantidade }, (_, indice) => {
-          const numero = NUMEROS_CARTELA[indice % NUMEROS_CARTELA.length];
-          return (
-            <Bilhete
-              key={indice}
-              numero={numero.valor}
-              estado={numero.estado}
-              tamanho={tamanhoNumero}
-              fonte={fonteNumero}
-            />
-          );
-        })}
+        {numeros.map((numero, indice) => (
+          <Bilhete
+            key={indice}
+            numero={numero}
+            corFundo={CORES_BILHETE[indice % CORES_BILHETE.length]}
+            tamanho={tamanhoNumero}
+            fonte={fonteNumero}
+          />
+        ))}
       </div>
     </div>
   );
