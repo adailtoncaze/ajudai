@@ -108,10 +108,10 @@ describe("borda da cartela da home no card", () => {
     );
   });
 
-  it("mantém a borda discreta em todos os formatos", () => {
+  it("mantém os bilhetes transparentes e discretos em todos os formatos", () => {
     for (const rede of ["whatsapp", "facebook", "instagram"] as const) {
       const formato = rede === "instagram" ? "story" : "direct";
-      expect(configuracaoCard(rede, formato)!.bordaCartela.opacidade).toBeLessThan(1);
+      expect(configuracaoCard(rede, formato)!.bordaCartela.opacidade).toBeLessThanOrEqual(0.45);
     }
   });
 });

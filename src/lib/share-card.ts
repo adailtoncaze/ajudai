@@ -6,7 +6,7 @@ export type BordaCartela = {
   altura: number;
   tamanhoNumero: number;
   fonteNumero: number;
-  /** A borda é discreta e não compete com o conteúdo. */
+  /** Transparência aplicada a cada bilhete para mantê-lo discreto. */
   opacidade: number;
 };
 
@@ -38,7 +38,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 40,
     premioImagemTamanho: 180,
     premioTituloMax: 50,
-    bordaCartela: { altura: 92, tamanhoNumero: 74, fonteNumero: 26, opacidade: 0.55 },
+    bordaCartela: { altura: 92, tamanhoNumero: 74, fonteNumero: 26, opacidade: 0.4 },
     vertical: true,
     rotulo: "Toque no link para participar",
   },
@@ -51,7 +51,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 21,
     premioImagemTamanho: 82,
     premioTituloMax: 42,
-    bordaCartela: { altura: 64, tamanhoNumero: 50, fonteNumero: 17, opacidade: 0.55 },
+    bordaCartela: { altura: 64, tamanhoNumero: 50, fonteNumero: 17, opacidade: 0.4 },
     vertical: false,
     rotulo: "Curta e compartilhe",
   },
@@ -64,7 +64,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 24,
     premioImagemTamanho: 100,
     premioTituloMax: 42,
-    bordaCartela: { altura: 76, tamanhoNumero: 60, fonteNumero: 21, opacidade: 0.55 },
+    bordaCartela: { altura: 76, tamanhoNumero: 60, fonteNumero: 21, opacidade: 0.4 },
     vertical: true,
     rotulo: "Chame no Direct para participar",
   },
@@ -77,7 +77,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 26,
     premioImagemTamanho: 116,
     premioTituloMax: 50,
-    bordaCartela: { altura: 92, tamanhoNumero: 74, fonteNumero: 26, opacidade: 0.55 },
+    bordaCartela: { altura: 92, tamanhoNumero: 74, fonteNumero: 26, opacidade: 0.4 },
     vertical: true,
     rotulo: "Chame no Direct para participar",
   },

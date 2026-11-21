@@ -488,14 +488,24 @@ function Bilhete({
   corFundo,
   tamanho,
   fonte,
+  opacidade,
 }: {
   numero: string;
   corFundo: string;
   tamanho: number;
   fonte: number;
+  opacidade: number;
 }) {
   return (
-    <div style={{ display: "flex", position: "relative", width: tamanho, height: tamanho }}>
+    <div
+      style={{
+        display: "flex",
+        position: "relative",
+        width: tamanho,
+        height: tamanho,
+        opacity: opacidade,
+      }}
+    >
       <div style={{ display: "flex", position: "absolute", top: 0, left: 0, width: tamanho, height: tamanho }}>
         <svg width={tamanho} height={tamanho} viewBox="0 0 24 24" fill="none">
           <path
@@ -547,7 +557,6 @@ function BordaCartela({ config }: { config: ConfigCard }) {
         boxSizing: "border-box",
         alignItems: "center",
         padding: "0 10px",
-        opacity: opacidade,
       }}
     >
       <div style={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
@@ -558,6 +567,7 @@ function BordaCartela({ config }: { config: ConfigCard }) {
             corFundo={CORES_BILHETE[indice % CORES_BILHETE.length]}
             tamanho={tamanhoNumero}
             fonte={fonteNumero}
+            opacidade={opacidade}
           />
         ))}
       </div>

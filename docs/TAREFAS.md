@@ -619,7 +619,7 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 **Fazer**
 1. Passar `draw_date` da rifa para o gerador de imagem e exibir `Sorteio <data>` na mesma linha, dentro do selo verde, nas quatro variantes (WhatsApp, Facebook, Instagram Direct e Instagram Story).
 2. Manter o selo da data e a tag do preço com a mesma altura e alinhados na mesma linha.
-3. Substituir o fundo ilustrado por uma faixa inferior discreta com bilhetes ampliados no formato da logo antiga, sem contorno cinza e sem barra branca por baixo, preenchidos com números aleatórios (sem repetição) e cores do tema alternadas, repetidos para ocupar toda a largura do card e dimensionados por formato.
+3. Substituir o fundo ilustrado por uma faixa inferior discreta com bilhetes ampliados no formato da logo antiga, sem contorno cinza e sem barra branca por baixo, preenchidos com números aleatórios (sem repetição) e cores do tema alternadas, com transparência aplicada a cada bilhete, repetidos para ocupar toda a largura do card e dimensionados por formato.
 4. Ocultar a data quando a rifa não tiver `draw_date`, sem deixar espaço reservado.
 5. Cobrir com testes a formatação da data, as configurações da borda, a sequência aleatória estável, as cores alternadas e a renderização das quatro variantes com e sem data.
 
@@ -627,6 +627,6 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 
 **Critérios de aceite**
 - O selo verde traz "Sorteio" e a data na mesma linha, com a mesma altura do preço e na mesma linha dele, em todas as imagens de compartilhamento.
-- A faixa inferior mostra bilhetes ampliados, sem contorno cinza e sem barra branca, com números aleatórios e cores do tema alternadas, discreta, proporcional a cada rede e ocupando toda a largura do card.
+- A faixa inferior mostra bilhetes ampliados, sem contorno cinza e sem barra branca, com números aleatórios, cores do tema alternadas e transparência discreta, proporcionais a cada rede e ocupando toda a largura do card.
 - Rifas sem data não exibem o selo de sorteio.
 - `npm run build`, `npm run lint` e `npm test` passam.
