@@ -1,12 +1,15 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { configuracaoCard, descricaoParaCard, resumirTexto } from "./share-card";
 import {
   TEXTO_CTA,
   compartilhamentoLink,
   compartilhamentoNativo,
+  compartilhamentoStoryInstagram,
   ctaComLink,
+  ehDispositivoMovel,
   legendaCard,
   linkStoryInstagram,
+  podeCompartilharArquivo,
   shareCardUrl,
   shareLinks,
   textoComLink,
@@ -162,5 +165,49 @@ describe("URLs de compartilhamento", () => {
     expect(texto).toBe(`${TEXTO_CTA}\nhttps://exemplo.test/r/rifa?wa=123`);
     expect(textoDoLink(whatsappShareLink("https://exemplo.test/r/rifa", 123))).toBe(texto);
     expect(texto).not.toContain("Rifa da escola");
+  });
+});
+
+describe("compartilhamento no Story do Instagram", () => {
+  const arquivo = { name: "card-story.png" } as File;
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("abre a folha nativa com o PNG e o link na legenda", () => {
+    vi.stubGlobal("navigator", {
+      userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)",
+      share: vi.fn().mockResolvedValue(undefined),
+      canShare: vi.fn().mockReturnValue(true),
+    });
+
+    expect(ehDispositivoMovel()).toBe(true);
+    expect(podeCompartilharArquivo(arquivo)).toBe(true);
+    expect(compartilhamentoStoryInstagram("https://exemplo.test/r/rifa", arquivo, 123)).toEqual({
+      title: "",
+      text: `${TEXTO_CTA}\nhttps://exemplo.test/r/rifa?wa=123`,
+      files: [arquivo],
+    });
+  });
+
+  it("desativa a folha nativa no computador e quando o arquivo não é aceito", () => {
+    vi.stubGlobal("navigator", {
+      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+      share: vi.fn(),
+      canShare: vi.fn().mockReturnValue(false),
+    });
+
+    expect(ehDispositivoMovel()).toBe(false);
+    expect(podeCompartilharArquivo(arquivo)).toBe(false);
+    expect(podeCompartilharArquivo(null)).toBe(false);
+  });
+
+  it("usa o criador de Stories como fallback quando não há Web Share", () => {
+    vi.stubGlobal("navigator", { userAgent: "Mozilla/5.0 (Linux; Android 15)" });
+
+    expect(ehDispositivoMovel()).toBe(true);
+    expect(podeCompartilharArquivo(arquivo)).toBe(false);
+    expect(linkStoryInstagram()).toBe("https://www.instagram.com/create/story/");
   });
 });

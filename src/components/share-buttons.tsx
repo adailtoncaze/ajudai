@@ -14,8 +14,11 @@ import { configuracaoCard, resumirTexto } from "@/lib/share-card";
 import {
   compartilhamentoLink,
   compartilhamentoNativo,
+  compartilhamentoStoryInstagram,
+  ehDispositivoMovel,
   legendaCard,
   linkStoryInstagram,
+  podeCompartilharArquivo,
   shareCardUrl,
   shareLinks,
   urlComCardDirect,
@@ -46,7 +49,7 @@ const INSTRUCOES: Record<RedeSocial, string> = {
   facebook:
     "Ao colar o link, o Facebook mostra este card. Você também pode publicar a imagem diretamente.",
   instagram:
-    "Story abre a câmera do Instagram com o card salvo e o link copiado. Direct envia o card como prévia do link na mensagem.",
+    "Story abre a folha de compartilhamento com o card: escolha Instagram e Story. Direct envia o card como prévia do link na mensagem.",
 };
 
 function IconeRede({ rede, tamanho = 18 }: { rede: RedeSocial; tamanho?: number }) {
@@ -161,14 +164,43 @@ export function ShareButtons({ dados, text }: Props) {
     );
   }
 
-  function prepararStoryInstagram() {
-    setAviso("");
-    // A navegação para o criador de Stories precisa ser o clique real no link.
-    void copiarTexto(dados.url);
+  function abrirCriadorStories() {
     baixarImagem(cardUrl, nomeArquivo);
+    window.location.assign(linkStoryInstagram());
     setAviso(
       "Card salvo e link copiado. Escolha o card na galeria e cole o link no adesivo da Story."
     );
+  }
+
+  async function compartilharStoryInstagram() {
+    setAviso("");
+    // Cópia iniciada ainda no gesto do clique: o link vai no adesivo da Story.
+    const copiandoLink = copiarTexto(dados.url);
+
+    // No computador o Instagram não aparece na folha do sistema; seguimos para o criador oficial.
+    if (!ehDispositivoMovel()) {
+      await copiandoLink;
+      abrirCriadorStories();
+      return;
+    }
+
+    setPreparandoCard(true);
+    try {
+      const arquivo = arquivoCardRef.current ?? (await buscarArquivoCard());
+      arquivoCardRef.current = arquivo;
+      if (!podeCompartilharArquivo(arquivo)) throw new Error("arquivo_nao_suportado");
+
+      await navigator.share(compartilhamentoStoryInstagram(dados.url, arquivo));
+      setAviso("Escolha o Instagram e toque em Story. O link já está copiado para o adesivo.");
+      return;
+    } catch (erro) {
+      if ((erro as { name?: string })?.name === "AbortError") return;
+      await copiandoLink;
+      abrirCriadorStories();
+      return;
+    } finally {
+      setPreparandoCard(false);
+    }
   }
 
   async function compartilharInstagram() {
@@ -319,14 +351,15 @@ export function ShareButtons({ dados, text }: Props) {
                     {preparandoCard ? "Preparando card..." : "Compartilha no instagram"}
                   </button>
                 ) : (
-                  <a
-                    href={linkStoryInstagram()}
-                    onClick={prepararStoryInstagram}
+                  <button
+                    type="button"
+                    onClick={compartilharStoryInstagram}
+                    disabled={preparandoCard}
                     className="ui-btn ui-btn-primary"
                   >
                     <IconeRede rede="instagram" />
-                    Compartilha no instagram
-                  </a>
+                    {preparandoCard ? "Preparando card..." : "Compartilha no instagram"}
+                  </button>
                 ))}
 
               <button type="button" onClick={baixarCard} className="ui-btn ui-btn-secondary">

@@ -67,11 +67,47 @@ export function compartilhamentoNativo(url: string, arquivo?: File, agora = Date
 }
 
 /**
- * O Web Share com arquivo abre o Instagram como mensagem (Direct), não como Story.
  * Link universal documentado pela Meta: abre o app na câmera/criador de Stories.
+ * É o fallback quando o navegador não oferece compartilhamento nativo com arquivo.
  */
 export function linkStoryInstagram(): string {
   return "https://www.instagram.com/create/story/";
+}
+
+/** Mobile é onde o Instagram aparece como destino na folha de compartilhamento. */
+export function ehDispositivoMovel(): boolean {
+  if (typeof navigator === "undefined") return false;
+  const navegador = navigator as Navigator & { userAgentData?: { mobile?: boolean } };
+  if (typeof navegador.userAgentData?.mobile === "boolean") return navegador.userAgentData.mobile;
+  if (/Android|iPhone|iPad|iPod/i.test(navegador.userAgent)) return true;
+  // O iPadOS Safari se apresenta como Mac, mas tem tela sensível ao toque.
+  return /Macintosh/i.test(navegador.userAgent) && navegador.maxTouchPoints > 1;
+}
+
+/** O card precisa ser um arquivo real para aparecer como mídia na folha nativa. */
+export function podeCompartilharArquivo(arquivo: File | null): boolean {
+  if (!arquivo || typeof navigator === "undefined" || typeof navigator.share !== "function") {
+    return false;
+  }
+  if (typeof navigator.canShare !== "function") return true;
+  return navigator.canShare({ files: [arquivo] });
+}
+
+/**
+ * Abre a folha do sistema com o PNG do card; nela o usuário escolhe o Instagram
+ * e a opção Story. O `title` vazio evita o erro de compartilhamento no Safari/iOS.
+ * A URL vai na legenda para continuar acessível se outro app for escolhido.
+ */
+export function compartilhamentoStoryInstagram(
+  url: string,
+  arquivo: File,
+  agora = Date.now()
+): ShareData {
+  return {
+    title: "",
+    text: `${TEXTO_CTA}\n${urlComPartilha(url, agora)}`,
+    files: [arquivo],
+  };
 }
 
 /** Marca o link para a prévia usar o card quadrado do Direct do Instagram. */
