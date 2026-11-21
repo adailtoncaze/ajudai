@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "limpar:teste": "node scripts/limpar-dados-teste.mjs",
     "check": "node scripts/verify-and-push.mjs"
   },
   "dependencies": {
