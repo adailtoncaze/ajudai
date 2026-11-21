@@ -9,6 +9,8 @@ export type ConfigCard = {
   descricaoMax: number;
   /** Tamanho da fonte da descrição nos cards verticais. */
   descricaoFonte: number;
+  /** Tamanho da imagem do prêmio nos cards verticais. */
+  premioImagemTamanho: number;
   premioTituloMax: number;
   vertical: boolean;
   rotulo: string;
@@ -18,10 +20,11 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
   whatsapp: {
     largura: 1080,
     altura: 1920,
-    alturaImagem: 950,
+    alturaImagem: 820,
     tituloMax: 62,
-    descricaoMax: 380,
-    descricaoFonte: 32,
+    descricaoMax: 350,
+    descricaoFonte: 36,
+    premioImagemTamanho: 150,
     premioTituloMax: 50,
     vertical: true,
     rotulo: "Toque no link para participar",
@@ -33,6 +36,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     tituloMax: 54,
     descricaoMax: 230,
     descricaoFonte: 21,
+    premioImagemTamanho: 82,
     premioTituloMax: 42,
     vertical: false,
     rotulo: "Curta e compartilhe",
@@ -44,6 +48,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     tituloMax: 58,
     descricaoMax: 300,
     descricaoFonte: 26,
+    premioImagemTamanho: 116,
     premioTituloMax: 46,
     vertical: true,
     rotulo: "Chame no Direct para participar",
@@ -55,6 +60,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     tituloMax: 62,
     descricaoMax: 420,
     descricaoFonte: 26,
+    premioImagemTamanho: 116,
     premioTituloMax: 50,
     vertical: true,
     rotulo: "Chame no Direct para participar",

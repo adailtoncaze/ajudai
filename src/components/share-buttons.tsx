@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Download, Image as ImageIcon, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { CopyLinkButton } from "@/components/copy-link-button";
 import {
   FacebookIcon,
@@ -41,7 +41,7 @@ const NOMES: Record<RedeSocial, string> = {
 
 const INSTRUCOES: Record<RedeSocial, string> = {
   whatsapp:
-    `No celular, o card vertical vai como imagem, o link clicável vem junto e o texto abaixo dele é só “${TEXTO_CTA}”. No computador, copie/anexe o card manualmente — o WhatsApp não anexa imagem pelo link.`,
+    `No celular, o WhatsApp mostra o card vertical como prévia clicável: toque no card para abrir a rifa. O texto da prévia é “${TEXTO_CTA}”. No computador, a URL aparece na mensagem; use “Baixar card” se quiser anexar a imagem.`,
   facebook:
     "Ao colar o link, o Facebook mostra este card. Você também pode publicar a imagem diretamente.",
   instagram:
@@ -58,9 +58,7 @@ export function ShareButtons({ dados, text }: Props) {
   const [redeAtiva, setRedeAtiva] = useState<RedeSocial | null>(null);
   const [formato, setFormato] = useState<FormatoCard>("feed");
   const [aviso, setAviso] = useState("");
-  const [preparandoCard, setPreparandoCard] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const arquivoCardRef = useRef<File | null>(null);
 
   const legenda =
     text?.trim() ||
@@ -72,44 +70,15 @@ export function ShareButtons({ dados, text }: Props) {
     });
   const linkWhatsapp = whatsappShareLink(dados.url);
   const linkFacebook = shareLinks(dados.url, legenda).facebook;
-  const mensagemNativa = compartilhamentoNativo(dados.url);
+  const compartilhamento = compartilhamentoNativo(dados.url);
   const config = redeAtiva ? configuracaoCard(redeAtiva, formato) : null;
   const cardUrl = shareCardUrl(dados.slug, redeAtiva ?? "facebook", formato);
   const nomeArquivo = `card-rifa-${dados.slug}-${redeAtiva ?? "facebook"}-${formato}.png`;
-
-  // Pré-carrega o PNG: o compartilhamento nativo exige gesto do usuário no clique.
-  useEffect(() => {
-    if (redeAtiva !== "whatsapp") return;
-    let cancelado = false;
-
-    (async () => {
-      try {
-        const resposta = await fetch(cardUrl);
-        if (!resposta.ok || cancelado) return;
-        const blob = await resposta.blob();
-        if (!cancelado) {
-          arquivoCardRef.current = new File([blob], nomeArquivo, {
-            type: blob.type || "image/png",
-          });
-        }
-      } catch {
-        // A ação de compartilhar tenta buscar o arquivo novamente.
-      } finally {
-        if (!cancelado) setPreparandoCard(false);
-      }
-    })();
-
-    return () => {
-      cancelado = true;
-    };
-  }, [redeAtiva, cardUrl, nomeArquivo]);
 
   function abrir(rede: RedeSocial) {
     setRedeAtiva(rede);
     setFormato("feed");
     setAviso("");
-    arquivoCardRef.current = null;
-    setPreparandoCard(rede === "whatsapp");
     dialogRef.current?.showModal();
   }
 
@@ -127,51 +96,23 @@ export function ShareButtons({ dados, text }: Props) {
     }
   }
 
-  async function buscarArquivoCard(): Promise<File> {
-    const resposta = await fetch(cardUrl);
-    if (!resposta.ok) throw new Error("card_indisponivel");
-    const blob = await resposta.blob();
-    const arquivo = new File([blob], nomeArquivo, { type: blob.type || "image/png" });
-    arquivoCardRef.current = arquivo;
-    return arquivo;
-  }
-
   async function compartilharWhatsapp() {
     setAviso("");
 
     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
-      setPreparandoCard(true);
       try {
-        const arquivo = arquivoCardRef.current ?? (await buscarArquivoCard());
-        const suportaArquivo =
-          typeof navigator.canShare !== "function" || navigator.canShare({ files: [arquivo] });
-        if (!suportaArquivo) throw new Error("arquivo_nao_suportado");
-
-        await navigator.share({
-          files: [arquivo],
-          title: dados.titulo,
-          text: mensagemNativa.text,
-          // Enviar a URL como campo próprio faz o WhatsApp exibi-la como link clicável,
-          // sem mostrar o endereço no texto abaixo da imagem.
-          url: mensagemNativa.url,
-        });
-        setAviso("Escolha o WhatsApp e envie a conversa.");
+        await navigator.share(compartilhamento);
+        setAviso("Escolha o WhatsApp e envie a prévia clicável da rifa.");
         return;
       } catch (erro) {
         if ((erro as { name?: string })?.name === "AbortError") return;
-        // Navegador sem suporte a arquivo: cai no link com a imagem copiada/salva.
-      } finally {
-        setPreparandoCard(false);
+        // Navegador sem share: cai no link wa.me abaixo.
       }
     }
 
     window.open(linkWhatsapp, "_blank", "noopener,noreferrer");
-    const copiou = await copiarImagem(cardUrl);
-    if (!copiou) baixarImagem(cardUrl, nomeArquivo);
     setAviso(
-      copiou
-        ? "O WhatsApp não anexa imagem automaticamente por aqui. Cole o card copiado na conversa — a mensagem terá o CTA e o link clicável."
-        : "O WhatsApp não anexa imagem automaticamente por aqui. Anexe o card salvo na conversa — a mensagem terá o CTA e o link clicável."
+      "A conversa foi aberta com o CTA e o link. No computador a URL aparece no texto — use “Baixar card” se quiser anexar a imagem."
     );
   }
 
@@ -272,11 +213,10 @@ export function ShareButtons({ dados, text }: Props) {
                 <button
                   type="button"
                   onClick={compartilharWhatsapp}
-                  disabled={preparandoCard}
                   className="ui-btn ui-btn-primary"
                 >
                   <IconeRede rede="whatsapp" />
-                  {preparandoCard ? "Preparando card..." : "Compartilhar no WhatsApp"}
+                  Compartilhar no WhatsApp
                 </button>
               )}
 

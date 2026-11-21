@@ -47,12 +47,14 @@ describe("configuração do card de compartilhamento", () => {
     expect(configuracaoCard("whatsapp", "story")).not.toBeNull();
   });
 
-  it("usa fonte maior na descrição do card do WhatsApp", () => {
+  it("usa fonte maior e prêmio maior no card do WhatsApp", () => {
     const whatsapp = configuracaoCard("whatsapp", "feed")!;
-    expect(whatsapp.descricaoFonte).toBeGreaterThan(configuracaoCard("instagram", "story")!.descricaoFonte);
-    expect(whatsapp.descricaoMax).toBeGreaterThanOrEqual(360);
+    const story = configuracaoCard("instagram", "story")!;
+    expect(whatsapp.descricaoFonte).toBeGreaterThan(story.descricaoFonte);
+    expect(whatsapp.premioImagemTamanho).toBeGreaterThan(story.premioImagemTamanho);
+    expect(whatsapp.descricaoMax).toBeGreaterThanOrEqual(340);
     expect(configuracaoCard("instagram", "feed")!.descricaoMax).toBeGreaterThanOrEqual(290);
-    expect(configuracaoCard("instagram", "story")!.descricaoMax).toBeGreaterThanOrEqual(400);
+    expect(story.descricaoMax).toBeGreaterThanOrEqual(400);
   });
 });
 
@@ -118,11 +120,10 @@ describe("URLs de compartilhamento", () => {
     );
   });
 
-  it("envia o CTA como texto e a URL em separado no compartilhamento nativo", () => {
+  it("envia somente a URL no compartilhamento nativo, sem texto visível", () => {
     const nativo = compartilhamentoNativo("https://exemplo.test/r/rifa", 123);
-    expect(nativo.text).toBe("Clique aqui para ajudar!");
-    expect(nativo.url).toBe("https://exemplo.test/r/rifa?wa=123");
-    expect(nativo.text).not.toContain("http");
+    expect(nativo).toEqual({ url: "https://exemplo.test/r/rifa?wa=123" });
+    expect(Object.keys(nativo)).not.toContain("text");
   });
 
   it("usa o CTA exato e separa a URL no fallback do WhatsApp", () => {

@@ -107,12 +107,13 @@ function Premio({
   titulo,
   imagem,
   vertical,
+  tamanhoImagem,
 }: {
   titulo: string | null;
   imagem: string | null;
   vertical: boolean;
+  tamanhoImagem: number;
 }) {
-  const tamanho = vertical ? 116 : 82;
   return (
     <div
       style={{
@@ -127,8 +128,8 @@ function Premio({
       <div style={{ display: "flex", marginRight: vertical ? 20 : 16 }}>
         <Imagem
           src={imagem}
-          largura={tamanho}
-          altura={tamanho}
+          largura={tamanhoImagem}
+          altura={tamanhoImagem}
           raio={vertical ? 18 : 12}
           legenda="PRÊMIO"
           tamanhoLegenda={vertical ? 18 : 12}
@@ -254,7 +255,12 @@ function CardHorizontal({
             </div>
           )}
           <div style={{ display: "flex", marginTop: 22 }}>
-            <Premio titulo={premioTitulo} imagem={premioImagem} vertical={false} />
+            <Premio
+              titulo={premioTitulo}
+              imagem={premioImagem}
+              vertical={false}
+              tamanhoImagem={config.premioImagemTamanho}
+            />
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -355,7 +361,12 @@ function CardVertical({
           </div>
         )}
         <div style={{ display: "flex", marginTop: 28 }}>
-          <Premio titulo={premioTitulo} imagem={premioImagem} vertical />
+          <Premio
+            titulo={premioTitulo}
+            imagem={premioImagem}
+            vertical
+            tamanhoImagem={config.premioImagemTamanho}
+          />
         </div>
       </div>
 

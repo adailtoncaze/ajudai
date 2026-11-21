@@ -52,11 +52,11 @@ export function ctaComLink(url: string, agora = Date.now()) {
 }
 
 /**
- * Payload do compartilhamento nativo: o texto é só o CTA e a URL vai no campo `url`,
- * para o WhatsApp exibi-la como link clicável sem mostrar o endereço na legenda.
+ * Payload do compartilhamento nativo: somente a URL. O WhatsApp gera a prévia clicável
+ * com o card vertical e o CTA, sem exibir o endereço como texto na conversa.
  */
 export function compartilhamentoNativo(url: string, agora = Date.now()) {
-  return { text: TEXTO_CTA, url: urlComPartilha(url, agora) };
+  return { url: urlComPartilha(url, agora) };
 }
 
 /** Texto da mensagem: legenda, chamada para ação e URL clicável. */

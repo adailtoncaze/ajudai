@@ -13,16 +13,23 @@ import {
   getPublicTakenNumbers,
   getPublicWinner,
 } from "@/lib/raffles";
-import { shareCardUrl } from "@/lib/share";
+import { TEXTO_CTA, shareCardUrl } from "@/lib/share";
 import { publicRaffleUrl } from "@/lib/validation";
 
 type Props = { params: Promise<{ slug: string }> };
+type MetadataProps = Props & {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
 // Evita duas consultas idênticas entre generateMetadata e a página.
 const carregarRifa = cache(getPublicRaffle);
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: MetadataProps): Promise<Metadata> {
   const { slug } = await params;
+  const busca = await searchParams;
+  // O link compartilhado no WhatsApp leva ?wa=<timestamp>. Nesse caso a prévia usa
+  // o card vertical e o CTA como título, para virar um card clicável sem URL visível.
+  const peloWhatsapp = busca.wa !== undefined;
   const raffle = await carregarRifa(slug);
 
   if (!raffle) return { title: "Rifa não encontrada" };
@@ -31,14 +38,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description =
     (raffle.description.replace(/\s+/g, " ").trim() ||
       `Participe da rifa ${raffle.title}`).slice(0, 160);
-  // O card gerado no servidor é a primeira imagem: é ele que WhatsApp e Facebook exibem.
+  // No link do WhatsApp, a prévia usa o card vertical e o CTA como título: o card
+  // vira o botão clicável e a URL não aparece como texto na conversa.
+  const tituloPrevia = peloWhatsapp ? TEXTO_CTA : title;
+  const card = peloWhatsapp
+    ? {
+        url: shareCardUrl(slug, "whatsapp"),
+        width: 1080,
+        height: 1920,
+        alt: `Card da rifa ${title}`,
+      }
+    : {
+        url: shareCardUrl(slug, "facebook"),
+        width: 1200,
+        height: 630,
+        alt: `Card da rifa ${title}`,
+      };
   const images = [
-    {
-      url: shareCardUrl(slug, "facebook"),
-      width: 1200,
-      height: 630,
-      alt: `Card da rifa ${title}`,
-    },
+    card,
     ...(raffle.image_url ? [{ url: raffle.image_url, width: 1200, height: 630 }] : []),
     ...(raffle.prize_image_url ? [{ url: raffle.prize_image_url, width: 1200, height: 630 }] : []),
   ];
@@ -47,7 +64,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     openGraph: {
-      title,
+      title: tituloPrevia,
       description,
       url: `/r/${slug}`,
       type: "website",
@@ -57,7 +74,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: tituloPrevia,
       description,
       images: images.map((image) => image.url),
     },

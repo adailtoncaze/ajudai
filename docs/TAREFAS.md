@@ -573,16 +573,17 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 ## [x] T33 — Card vertical e legenda enxuta no WhatsApp
 
 **Fazer**
-1. Tornar o card do WhatsApp vertical (1080x1920), aproveitando a tela do celular e aumentando o espaço para título, descrição e prêmio.
-2. Aumentar a fonte da descrição apenas no card do WhatsApp (32px), reduzindo o limite de caracteres para manter o layout dentro da imagem.
-3. Enviar no compartilhamento nativo a imagem, o texto exato “Clique aqui para ajudar!” e a URL no campo `url` do Web Share API, para que o WhatsApp a exiba como link clicável sem mostrar o endereço no texto.
-4. Manter CTA e URL no fallback `wa.me` (necessário para abrir a rifa quando não há compartilhamento com arquivo) e atualizar as instruções/avisos do modal.
-5. Cobrir com testes a configuração vertical, a fonte maior, o CTA exato e a separação entre texto e URL.
+1. Manter o card do WhatsApp vertical (1080x1920) e reduzir a imagem do topo para liberar espaço para texto e prêmio.
+2. Aumentar a fonte da descrição para 36px e a imagem do prêmio para 150px apenas no card do WhatsApp.
+3. Parar de enviar o PNG como arquivo no compartilhamento nativo: passar somente a URL com `?wa=<timestamp>`.
+4. Fazer a página reconhecer o parâmetro `wa` e gerar a prévia com o card vertical e o título “Clique aqui para ajudar!” quando o link vier do WhatsApp.
+5. Manter CTA e URL no fallback `wa.me` (necessário quando não há Web Share) e atualizar as instruções/avisos do modal.
+6. Cobrir com testes a configuração do card, a fonte/prêmio maiores e o payload nativo sem texto.
 
-**Decisão:** o PNG já contém todas as informações da rifa. Repetir esses dados na legenda dificulta a leitura no WhatsApp. A URL como campo próprio do `navigator.share` é a forma de torná-la clicável sem exibir o endereço no texto. No fallback `wa.me`, o endereço precisa continuar visível — é a única forma de abrir a página.
+**Decisão:** o WhatsApp não permite transformar texto arbitrário de legenda em hyperlink e, quando recebe `files` + `url`, acaba exibindo a URL como texto. A forma confiável de ter um card clicável sem mostrar o endereço é compartilhar apenas a URL e deixar o WhatsApp gerar a prévia rica: o card vira o botão clicável e o título da prévia é o CTA.
 
 **Critérios de aceite**
-- A imagem enviada no WhatsApp é vertical (1080x1920), com a descrição em fonte maior.
-- O texto abaixo da imagem é exatamente “Clique aqui para ajudar!”, sem URL visível.
-- A URL da rifa é enviada como link clicável no compartilhamento nativo.
+- O card do WhatsApp é vertical (1080x1920), com descrição em 36px e imagem do prêmio em 150px.
+- No celular, a mensagem mostra a prévia clicável do card, com o título “Clique aqui para ajudar!” e sem URL visível.
+- No fallback `wa.me`, CTA e URL continuam presentes para abrir a rifa.
 - `npm run build`, `npm run lint` e `npm test` passam.
