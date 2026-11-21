@@ -26,8 +26,6 @@ const COR = {
   laranjaVivo: "#F04E23",
   verde: "#1B744E",
   menta: "#3EDA94",
-  linha: "#7C8791",
-  borda: "#DCE1E6",
   brand100: "#FFE0D5",
   accent50: "#EAFCF3",
   accent100: "#D0F7E5",
@@ -503,8 +501,6 @@ function Bilhete({
           <path
             d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"
             fill={corFundo}
-            stroke={COR.linha}
-            strokeWidth={1.4}
           />
           <path
             d="M17 7v2 M17 11v2 M17 15v2"
@@ -533,7 +529,7 @@ function Bilhete({
   );
 }
 
-/** Borda inferior discreta com bilhetes ocupando toda a largura do card. */
+/** Faixa inferior discreta com bilhetes ocupando toda a largura do card. */
 function BordaCartela({ config }: { config: ConfigCard }) {
   const { altura, tamanhoNumero, fonteNumero, opacidade } = config.bordaCartela;
   const quantidade = Math.ceil(config.largura / (tamanhoNumero + 7));
@@ -551,8 +547,6 @@ function BordaCartela({ config }: { config: ConfigCard }) {
         boxSizing: "border-box",
         alignItems: "center",
         padding: "0 10px",
-        backgroundColor: COR.superficie,
-        borderTop: `2px solid ${COR.borda}`,
         opacity: opacidade,
       }}
     >

@@ -22,7 +22,7 @@ export type ConfigCard = {
   /** Tamanho da imagem do prêmio nos cards verticais. */
   premioImagemTamanho: number;
   premioTituloMax: number;
-  /** Borda inferior com uma linha da cartela da home. */
+  /** Faixa inferior com bilhetes da cartela da home. */
   bordaCartela: BordaCartela;
   vertical: boolean;
   rotulo: string;
@@ -38,7 +38,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 40,
     premioImagemTamanho: 180,
     premioTituloMax: 50,
-    bordaCartela: { altura: 58, tamanhoNumero: 46, fonteNumero: 18, opacidade: 0.55 },
+    bordaCartela: { altura: 92, tamanhoNumero: 74, fonteNumero: 26, opacidade: 0.55 },
     vertical: true,
     rotulo: "Toque no link para participar",
   },
@@ -51,7 +51,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 21,
     premioImagemTamanho: 82,
     premioTituloMax: 42,
-    bordaCartela: { altura: 44, tamanhoNumero: 34, fonteNumero: 14, opacidade: 0.55 },
+    bordaCartela: { altura: 64, tamanhoNumero: 50, fonteNumero: 17, opacidade: 0.55 },
     vertical: false,
     rotulo: "Curta e compartilhe",
   },
@@ -64,7 +64,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 24,
     premioImagemTamanho: 100,
     premioTituloMax: 42,
-    bordaCartela: { altura: 48, tamanhoNumero: 38, fonteNumero: 15, opacidade: 0.55 },
+    bordaCartela: { altura: 76, tamanhoNumero: 60, fonteNumero: 21, opacidade: 0.55 },
     vertical: true,
     rotulo: "Chame no Direct para participar",
   },
@@ -77,7 +77,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 26,
     premioImagemTamanho: 116,
     premioTituloMax: 50,
-    bordaCartela: { altura: 58, tamanhoNumero: 46, fonteNumero: 18, opacidade: 0.55 },
+    bordaCartela: { altura: 92, tamanhoNumero: 74, fonteNumero: 26, opacidade: 0.55 },
     vertical: true,
     rotulo: "Chame no Direct para participar",
   },
