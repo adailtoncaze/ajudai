@@ -3,6 +3,7 @@ import { configuracaoCard, descricaoParaCard, resumirTexto } from "./share-card"
 import {
   TEXTO_CTA,
   compartilhamentoImagem,
+  compartilhamentoImagemComLink,
   compartilhamentoNativo,
   ctaComLink,
   legendaCard,
@@ -14,7 +15,7 @@ import {
 
 describe("configuração do card de compartilhamento", () => {
   it("usa card vertical para o WhatsApp, aproveitando a tela do celular", () => {
-    expect(configuracaoCard("whatsapp", "feed")).toMatchObject({
+    expect(configuracaoCard("whatsapp", "direct")).toMatchObject({
       largura: 1080,
       altura: 1920,
       vertical: true,
@@ -22,17 +23,17 @@ describe("configuração do card de compartilhamento", () => {
   });
 
   it("mantém 1200x630 para o Facebook", () => {
-    expect(configuracaoCard("facebook", "feed")).toMatchObject({
+    expect(configuracaoCard("facebook", "direct")).toMatchObject({
       largura: 1200,
       altura: 630,
       vertical: false,
     });
   });
 
-  it("usa formatos verticais para o Instagram", () => {
-    expect(configuracaoCard("instagram", "feed")).toMatchObject({
+  it("usa story vertical e direct quadrado para o Instagram", () => {
+    expect(configuracaoCard("instagram", "direct")).toMatchObject({
       largura: 1080,
-      altura: 1350,
+      altura: 1080,
       vertical: true,
     });
     expect(configuracaoCard("instagram", "story")).toMatchObject({
@@ -43,20 +44,21 @@ describe("configuração do card de compartilhamento", () => {
   });
 
   it("rejeita redes e formatos desconhecidos", () => {
-    expect(configuracaoCard("x", "feed")).toBeNull();
+    expect(configuracaoCard("x", "direct")).toBeNull();
+    expect(configuracaoCard("instagram", "feed")).toBeNull();
     expect(configuracaoCard("instagram", "story-antigo")).toBeNull();
     expect(configuracaoCard("whatsapp", "story")).not.toBeNull();
   });
 
   it("usa fonte maior e prêmio maior no card do WhatsApp", () => {
-    const whatsapp = configuracaoCard("whatsapp", "feed")!;
+    const whatsapp = configuracaoCard("whatsapp", "direct")!;
     const story = configuracaoCard("instagram", "story")!;
     expect(whatsapp.descricaoFonte).toBe(40);
     expect(whatsapp.premioImagemTamanho).toBe(180);
     expect(whatsapp.descricaoFonte).toBeGreaterThan(story.descricaoFonte);
     expect(whatsapp.premioImagemTamanho).toBeGreaterThan(story.premioImagemTamanho);
     expect(whatsapp.descricaoMax).toBeGreaterThanOrEqual(340);
-    expect(configuracaoCard("instagram", "feed")!.descricaoMax).toBeGreaterThanOrEqual(290);
+    expect(configuracaoCard("instagram", "direct")!.descricaoMax).toBeGreaterThanOrEqual(140);
     expect(story.descricaoMax).toBeGreaterThanOrEqual(400);
   });
 });
@@ -140,9 +142,18 @@ describe("URLs de compartilhamento", () => {
     expect(nativo.text).toBe("Clique aqui para ajudar!");
   });
 
-  it("compartilha apenas a imagem no Instagram, sem legenda nem URL", () => {
+  it("compartilha apenas a imagem no Story do Instagram", () => {
     const arquivo = { name: "card.png" } as File;
     expect(compartilhamentoImagem(arquivo)).toEqual({ files: [arquivo] });
+  });
+
+  it("leva imagem e link clicável no Direct do Instagram", () => {
+    const arquivo = { name: "card.png" } as File;
+    expect(compartilhamentoImagemComLink(arquivo, "https://exemplo.test/r/rifa")).toEqual({
+      text: "Clique aqui para ajudar!",
+      url: "https://exemplo.test/r/rifa",
+      files: [arquivo],
+    });
   });
 
   it("usa o CTA exato e separa a URL no fallback do WhatsApp", () => {

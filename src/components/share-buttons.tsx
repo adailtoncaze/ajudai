@@ -9,10 +9,11 @@ import {
   InstagramIcon,
   WhatsAppIcon,
 } from "@/components/social-icons";
-import { baixarImagem } from "@/lib/clipboard";
+import { baixarImagem, copiarTexto } from "@/lib/clipboard";
 import { configuracaoCard, resumirTexto } from "@/lib/share-card";
 import {
   compartilhamentoImagem,
+  compartilhamentoImagemComLink,
   compartilhamentoNativo,
   legendaCard,
   shareCardUrl,
@@ -44,7 +45,7 @@ const INSTRUCOES: Record<RedeSocial, string> = {
   facebook:
     "Ao colar o link, o Facebook mostra este card. Você também pode publicar a imagem diretamente.",
   instagram:
-    "Escolha o formato e compartilhe no Instagram ou baixe a imagem para publicar manualmente.",
+    "No Direct, o link vai junto na mensagem e fica clicável. No Story, o link é copiado para você colar no adesivo de link.",
 };
 
 function IconeRede({ rede, tamanho = 18 }: { rede: RedeSocial; tamanho?: number }) {
@@ -55,7 +56,7 @@ function IconeRede({ rede, tamanho = 18 }: { rede: RedeSocial; tamanho?: number 
 
 export function ShareButtons({ dados, text }: Props) {
   const [redeAtiva, setRedeAtiva] = useState<RedeSocial | null>(null);
-  const [formato, setFormato] = useState<FormatoCard>("feed");
+  const [formato, setFormato] = useState<FormatoCard>("direct");
   const [aviso, setAviso] = useState("");
   const [preparandoCard, setPreparandoCard] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -104,7 +105,7 @@ export function ShareButtons({ dados, text }: Props) {
 
   function abrir(rede: RedeSocial) {
     setRedeAtiva(rede);
-    setFormato("feed");
+    setFormato("direct");
     setAviso("");
     arquivoCardRef.current = null;
     setPreparandoCard(rede === "whatsapp" || rede === "instagram");
@@ -175,8 +176,15 @@ export function ShareButtons({ dados, text }: Props) {
         typeof navigator.canShare !== "function" || navigator.canShare({ files: [arquivo] });
       if (!suportaArquivo) throw new Error("arquivo_nao_suportado");
 
-      await navigator.share(compartilhamentoImagem(arquivo));
-      setAviso("Escolha o Instagram para publicar no feed ou no story.");
+      if (formato === "direct") {
+        await navigator.share(compartilhamentoImagemComLink(arquivo, dados.url));
+        setAviso("Escolha o Instagram e envie no Direct: o card e o link vão juntos.");
+      } else {
+        // Cópia dispara junto com o clique, antes da chamada de compartilhamento.
+        void copiarTexto(dados.url);
+        await navigator.share(compartilhamentoImagem(arquivo));
+        setAviso("Escolha o Instagram para o Story e cole o link no adesivo de link.");
+      }
     } catch (erro) {
       if ((erro as { name?: string })?.name === "AbortError") return;
       setAviso("Não foi possível compartilhar. Baixe o card para publicar no Instagram.");
@@ -246,7 +254,7 @@ export function ShareButtons({ dados, text }: Props) {
                   aria-labelledby="formato-card-label"
                   className="mt-2 flex flex-wrap gap-2"
                 >
-                  {(["feed", "story"] as const).map((opcao) => (
+                  {(["story", "direct"] as const).map((opcao) => (
                     <button
                       key={opcao}
                       type="button"
@@ -261,7 +269,7 @@ export function ShareButtons({ dados, text }: Props) {
                         formato === opcao ? "ui-toggle-ativo" : ""
                       }`}
                     >
-                      {opcao === "feed" ? "Feed (4:5)" : "Story (9:16)"}
+                      {opcao === "story" ? "Story (9:16)" : "Direct (1:1)"}
                     </button>
                   ))}
                 </div>

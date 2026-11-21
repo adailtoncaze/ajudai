@@ -579,14 +579,16 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 4. Fazer a página reconhecer o parâmetro `wa` e gerar a prévia com o card vertical quando o link vier do WhatsApp, mantendo o título da rifa para não duplicar o CTA da legenda.
 5. Derivar a URL pública de `NEXT_PUBLIC_SITE_URL`, `NEXT_SITE_URL` ou `VERCEL_URL`, e usar o host da requisição como último recurso, corrigindo os links gerados na Vercel.
 6. Manter CTA e URL no fallback `wa.me` (necessário quando não há Web Share) e atualizar as instruções/avisos do modal.
-7. No Instagram, usar `navigator.share` apenas com o PNG e manter somente a opção de baixar o card para publicação manual.
-8. Cobrir com testes a configuração do card, a fonte/prêmio maiores e os payloads de compartilhamento.
+7. No Instagram, usar `navigator.share` com o PNG nos formatos Story (9:16) e Direct (1:1), mantendo somente a opção de baixar o card como alternativa.
+8. No Direct, anexar a URL ao compartilhamento para ela ficar clicável na mensagem; no Story, copiar a URL para o adesivo de link (o feed do Instagram não aceita links clicáveis na legenda).
+9. Cobrir com testes a configuração do card, a fonte/prêmio maiores e os payloads de compartilhamento.
 
-**Decisão:** o WhatsApp não permite anexar imagem e, ao mesmo tempo, esconder a URL mantendo o link clicável. Com `files` + `url`, a URL aparece como texto; sem `files`, o card vira prévia clicável mas não é enviado como mídia. Após validação no celular, optou-se por priorizar imagem + link funcional: a legenda traz o CTA e a URL visível (clicável).
+**Decisão:** o WhatsApp não permite anexar imagem e, ao mesmo tempo, esconder a URL mantendo o link clicável. Com `files` + `url`, a URL aparece como texto; sem `files`, o card vira prévia clicável mas não é enviado como mídia. Após validação no celular, optou-se por priorizar imagem + link funcional: a legenda traz o CTA e a URL visível (clicável). No Instagram, o feed não permite link clicável na legenda; o Direct aceita a URL junto da imagem e o Story exige adesivo de link, então a URL é copiada para esse fim.
 
 **Critérios de aceite**
 - O card do WhatsApp é vertical (1080x1920), com descrição em 40px e imagem do prêmio em 180px.
 - No celular, a mensagem traz o card vertical como imagem e a legenda “Clique aqui para ajudar!” seguida da URL clicável.
 - Os links gerados na Vercel usam o domínio hospedado, não localhost.
 - No fallback `wa.me`, CTA e URL continuam presentes para abrir a rifa.
+- No Instagram, os formatos são Story (1080x1920) e Direct (1080x1080); no Direct a URL acompanha a imagem e no Story ela é copiada para o adesivo de link.
 - `npm run build`, `npm run lint` e `npm test` passam.

@@ -1,7 +1,7 @@
 import { brl } from "./format";
 
 export type RedeSocial = "whatsapp" | "instagram" | "facebook";
-export type FormatoCard = "feed" | "story";
+export type FormatoCard = "story" | "direct";
 
 export const TEXTO_CTA = "Clique aqui para ajudar!";
 
@@ -66,9 +66,14 @@ export function compartilhamentoNativo(url: string, arquivo?: File, agora = Date
   return dados;
 }
 
-/** Compartilhamento de imagem pura, usado no Instagram (que não abre links no card). */
+/** Compartilhamento de imagem pura, usado no Story do Instagram. */
 export function compartilhamentoImagem(arquivo: File): ShareData {
   return { files: [arquivo] };
+}
+
+/** Imagem mais link clicável na mensagem: usado no Direct do Instagram. */
+export function compartilhamentoImagemComLink(arquivo: File, url: string): ShareData {
+  return { text: TEXTO_CTA, url, files: [arquivo] };
 }
 
 /** Texto da mensagem: legenda, chamada para ação e URL clicável. */
@@ -86,7 +91,7 @@ export function whatsappShareLink(url: string, agora = Date.now()) {
 export function shareCardUrl(
   slug: string,
   rede: RedeSocial = "facebook",
-  formato: FormatoCard = "feed"
+  formato: FormatoCard = "direct"
 ) {
   return `/api/raffles/${slug}/share-card?rede=${rede}&formato=${formato}`;
 }

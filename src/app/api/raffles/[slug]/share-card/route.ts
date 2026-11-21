@@ -34,7 +34,7 @@ export async function GET(request: Request, { params }: Props) {
     const consulta = new URL(request.url).searchParams;
     const config = configuracaoCard(
       consulta.get("rede") ?? "facebook",
-      consulta.get("formato") ?? "feed"
+      consulta.get("formato") ?? "direct"
     );
     if (!config) return new Response("Parâmetros inválidos", { status: 400 });
 

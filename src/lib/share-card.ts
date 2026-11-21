@@ -41,15 +41,15 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     vertical: false,
     rotulo: "Curta e compartilhe",
   },
-  "instagram-feed": {
+  "instagram-direct": {
     largura: 1080,
-    altura: 1350,
-    alturaImagem: 540,
-    tituloMax: 58,
-    descricaoMax: 300,
-    descricaoFonte: 26,
-    premioImagemTamanho: 116,
-    premioTituloMax: 46,
+    altura: 1080,
+    alturaImagem: 430,
+    tituloMax: 52,
+    descricaoMax: 150,
+    descricaoFonte: 24,
+    premioImagemTamanho: 100,
+    premioTituloMax: 42,
     vertical: true,
     rotulo: "Chame no Direct para participar",
   },
@@ -75,7 +75,7 @@ export function configuracaoCard(
   if (rede !== "whatsapp" && rede !== "facebook" && rede !== "instagram") {
     return null;
   }
-  if (rede === "instagram" && formato !== "feed" && formato !== "story") {
+  if (rede === "instagram" && formato !== "story" && formato !== "direct") {
     return null;
   }
   const chave = rede === "instagram" ? `instagram-${formato}` : rede;
@@ -103,5 +103,5 @@ export function redesValidas(rede: string): rede is RedeSocial {
 }
 
 export function formatosValidos(formato: string): formato is FormatoCard {
-  return formato === "feed" || formato === "story";
+  return formato === "story" || formato === "direct";
 }

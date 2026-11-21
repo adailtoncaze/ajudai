@@ -4,9 +4,9 @@ import { configuracaoCard, descricaoParaCard, resumirTexto } from "./share-card"
 import { elementoCard } from "./share-card-image";
 
 const variantes = [
-  ["whatsapp", "feed"],
-  ["facebook", "feed"],
-  ["instagram", "feed"],
+  ["whatsapp", "direct"],
+  ["facebook", "direct"],
+  ["instagram", "direct"],
   ["instagram", "story"],
 ] as const;
 
