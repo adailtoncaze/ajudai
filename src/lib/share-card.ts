@@ -1,12 +1,12 @@
 import { dateOnly } from "./format";
 import type { FormatoCard, RedeSocial } from "@/lib/share";
 
-export type CartelaFundo = {
-  /** Largura da reprodução da cartela da home usada como fundo. */
-  largura: number;
-  /** Distância da cartela em relação ao topo do card. */
-  top: number;
-  /** Opacidade: a cartela é um fundo, não compete com o texto. */
+export type BordaCartela = {
+  /** Altura da faixa de números no rodapé do card. */
+  altura: number;
+  tamanhoNumero: number;
+  fonteNumero: number;
+  /** A borda é discreta e não compete com o conteúdo. */
   opacidade: number;
 };
 
@@ -22,8 +22,8 @@ export type ConfigCard = {
   /** Tamanho da imagem do prêmio nos cards verticais. */
   premioImagemTamanho: number;
   premioTituloMax: number;
-  /** Cartela da home em fundo, dimensionada para cada formato. */
-  fundoCartela: CartelaFundo;
+  /** Borda inferior com uma linha da cartela da home. */
+  bordaCartela: BordaCartela;
   vertical: boolean;
   rotulo: string;
 };
@@ -38,7 +38,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 40,
     premioImagemTamanho: 180,
     premioTituloMax: 50,
-    fundoCartela: { largura: 820, top: 800, opacidade: 0.14 },
+    bordaCartela: { altura: 56, tamanhoNumero: 46, fonteNumero: 18, opacidade: 0.55 },
     vertical: true,
     rotulo: "Toque no link para participar",
   },
@@ -51,7 +51,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 21,
     premioImagemTamanho: 82,
     premioTituloMax: 42,
-    fundoCartela: { largura: 460, top: 12, opacidade: 0.16 },
+    bordaCartela: { altura: 42, tamanhoNumero: 34, fonteNumero: 14, opacidade: 0.55 },
     vertical: false,
     rotulo: "Curta e compartilhe",
   },
@@ -64,7 +64,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 24,
     premioImagemTamanho: 100,
     premioTituloMax: 42,
-    fundoCartela: { largura: 500, top: 370, opacidade: 0.14 },
+    bordaCartela: { altura: 46, tamanhoNumero: 38, fonteNumero: 15, opacidade: 0.55 },
     vertical: true,
     rotulo: "Chame no Direct para participar",
   },
@@ -77,7 +77,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     descricaoFonte: 26,
     premioImagemTamanho: 116,
     premioTituloMax: 50,
-    fundoCartela: { largura: 820, top: 800, opacidade: 0.14 },
+    bordaCartela: { altura: 56, tamanhoNumero: 46, fonteNumero: 18, opacidade: 0.55 },
     vertical: true,
     rotulo: "Chame no Direct para participar",
   },

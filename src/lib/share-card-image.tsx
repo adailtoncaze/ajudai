@@ -25,14 +25,14 @@ const COR = {
   laranjaForte: "#D6411A",
   laranjaVivo: "#F04E23",
   verde: "#1B744E",
-  verdeClaro: "#EAFCF3",
-  verdeTexto: "#D0F7E5",
-  accent: "#3EDA94",
   linha: "#7C8791",
   borda: "#DCE1E6",
 };
 
-// Reprodução da cartela ilustrativa da home: 12 números em duas linhas de seis.
+// Preço e data precisam ter exatamente a mesma altura para ficarem alinhados.
+const ALTURA_VALOR = { vertical: 98, horizontal: 78 } as const;
+
+// Números da cartela da home, usados na borda inferior do card.
 // Mantém as quatro semânticas da grade pública (livre, selecionado, reservado, pago).
 const NUMEROS_CARTELA = [
   { valor: "07", estado: "pago" },
@@ -204,11 +204,14 @@ function Preco({ precoCents, vertical }: { precoCents: number; vertical: boolean
       style={{
         display: "flex",
         alignItems: "center",
+        justifyContent: "center",
         alignSelf: "flex-start",
+        boxSizing: "border-box",
+        height: vertical ? ALTURA_VALOR.vertical : ALTURA_VALOR.horizontal,
         backgroundColor: COR.laranjaVivo,
         border: `4px solid ${COR.superficie}`,
         borderRadius: 999,
-        padding: vertical ? "18px 34px" : "14px 28px",
+        padding: vertical ? "0 34px" : "0 28px",
       }}
     >
       <div
@@ -247,7 +250,6 @@ function CardHorizontal({
         overflow: "hidden",
       }}
     >
-      <CartelaComoFundo config={config} />
       <Imagem
         src={imagem}
         largura={440}
@@ -260,11 +262,11 @@ function CardHorizontal({
       <div
         style={{
           width: config.largura - 452,
-          height: config.altura,
+          height: config.altura - config.bordaCartela.altura,
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          padding: "48px 44px",
+          padding: "40px 44px 24px",
         }}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -308,6 +310,7 @@ function CardHorizontal({
           </div>
         </div>
       </div>
+      <BordaCartela config={config} />
     </div>
   );
 }
@@ -364,8 +367,6 @@ function CardVertical({
         RIFA SOLIDÁRIA
       </div>
 
-      <CartelaComoFundo config={config} />
-
       <div
         style={{
           position: "absolute",
@@ -415,7 +416,7 @@ function CardVertical({
       <div
         style={{
           position: "absolute",
-          bottom: 40,
+          bottom: config.bordaCartela.altura + 40,
           left: 68,
           width: config.largura - 136,
           display: "flex",
@@ -427,11 +428,12 @@ function CardVertical({
           {config.rotulo}
         </div>
       </div>
+      <BordaCartela config={config} />
     </div>
   );
 }
 
-/** Rodapé com o valor à esquerda e a data do sorteio em destaque à direita. */
+/** Rodapé com o valor à esquerda e a data do sorteio à direita, na mesma linha e altura. */
 function RodapeValor({
   precoCents,
   data,
@@ -455,33 +457,25 @@ function RodapeValor({
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-end",
+            alignItems: "center",
+            justifyContent: "center",
+            boxSizing: "border-box",
+            height: vertical ? ALTURA_VALOR.vertical : ALTURA_VALOR.horizontal,
             backgroundColor: COR.verde,
             border: `4px solid ${COR.superficie}`,
             borderRadius: 999,
-            padding: vertical ? "14px 32px" : "10px 24px",
+            padding: vertical ? "0 32px" : "0 24px",
           }}
         >
           <div
             style={{
-              color: COR.verdeTexto,
-              fontSize: vertical ? 18 : 14,
-              fontWeight: 800,
-              letterSpacing: 2,
-            }}
-          >
-            SORTEIO
-          </div>
-          <div
-            style={{
               color: COR.superficie,
-              fontSize: vertical ? 34 : 24,
+              fontSize: vertical ? 40 : 28,
               fontWeight: 800,
-              marginTop: 2,
+              letterSpacing: 1,
             }}
           >
-            {data}
+            {`Sorteio ${data}`}
           </div>
         </div>
       )}
@@ -489,211 +483,53 @@ function RodapeValor({
   );
 }
 
-/** Reprodução exata da cartela da home, aplicada como fundo na área rosa do card. */
-function CartelaComoFundo({ config }: { config: ConfigCard }) {
-  const { largura, top, opacidade } = config.fundoCartela;
-  const fator = largura / 448;
-  const px = (valor: number) => valor * fator;
-  const esquerda = config.vertical
-    ? (config.largura - largura) / 2
-    : 440 + (config.largura - 452 - largura) / 2;
-  const larguraNumero = (400 - 3 * 10) / 4;
-
-  const linhas: (typeof NUMEROS_CARTELA)[number][][] = [];
-  for (let i = 0; i < NUMEROS_CARTELA.length; i += 4) {
-    linhas.push(NUMEROS_CARTELA.slice(i, i + 4));
-  }
+/** Borda inferior discreta com uma linha de números da cartela da home. */
+function BordaCartela({ config }: { config: ConfigCard }) {
+  const { altura, tamanhoNumero, fonteNumero, opacidade } = config.bordaCartela;
 
   return (
     <div
       style={{
         display: "flex",
         position: "absolute",
-        top,
-        left: esquerda,
-        width: largura,
+        bottom: 0,
+        left: 0,
+        width: config.largura,
+        height: altura,
+        boxSizing: "border-box",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: COR.superficie,
+        borderTop: `2px solid ${COR.borda}`,
         opacity: opacidade,
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          boxSizing: "border-box",
-          backgroundColor: COR.superficie,
-          border: `${px(1)}px solid ${COR.borda}`,
-          borderRadius: px(24),
-          padding: px(24),
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ color: COR.laranja, fontSize: px(14), fontWeight: 800, letterSpacing: px(2) }}>
-              Rifa da esperança
-            </div>
-            <div style={{ color: COR.titulo, fontSize: px(20), fontWeight: 800, marginTop: px(6) }}>
-              Bazar da escola
-            </div>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              backgroundColor: COR.verde,
-              borderRadius: 999,
-              padding: `${px(6)}px ${px(10)}px`,
-              color: COR.superficie,
-              fontSize: px(12),
-              fontWeight: 800,
-            }}
-          >
-            Aberta
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100%",
-            height: px(112),
-            marginTop: px(20),
-            borderRadius: px(16),
-            backgroundColor: COR.laranjaVivo,
-            backgroundImage: `linear-gradient(135deg, ${COR.laranjaVivo}, ${COR.accent})`,
-          }}
-        >
-          <svg width={px(42)} height={px(42)} viewBox="0 0 24 24" fill="none">
-            <path
-              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-              fill={COR.superficie}
-            />
-          </svg>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", marginTop: px(20) }}>
-          <div
-            style={{
-              display: "flex",
-              width: "100%",
-              justifyContent: "space-between",
-              color: COR.texto,
-              fontSize: px(14),
-              fontWeight: 700,
-            }}
-          >
-            <div>128 de 300 números</div>
-            <div style={{ color: COR.laranja }}>43% vendidos</div>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              width: "100%",
-              height: px(8),
-              marginTop: px(8),
-              borderRadius: 999,
-              backgroundColor: COR.superficieMuda,
-              overflow: "hidden",
-            }}
-          >
-            <div style={{ display: "flex", width: "43%", height: "100%", backgroundColor: COR.laranjaVivo }} />
-          </div>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", marginTop: px(20) }}>
-          {linhas.map((linha, indiceLinha) => (
+      <div style={{ display: "flex" }}>
+        {NUMEROS_CARTELA.map((numero, indice) => {
+          const estilo = ESTILOS_NUMERO[numero.estado];
+          return (
             <div
-              key={indiceLinha}
-              style={{ display: "flex", marginBottom: indiceLinha < linhas.length - 1 ? px(10) : 0 }}
+              key={numero.valor}
+              style={{
+                width: tamanhoNumero,
+                height: tamanhoNumero,
+                boxSizing: "border-box",
+                marginRight: indice < NUMEROS_CARTELA.length - 1 ? 8 : 0,
+                borderRadius: 10,
+                border: `2px solid ${estilo.borda}`,
+                backgroundColor: estilo.fundo,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: estilo.texto,
+                fontSize: fonteNumero,
+                fontWeight: 800,
+              }}
             >
-              {linha.map((numero, indiceNumero) => {
-                const estilo = ESTILOS_NUMERO[numero.estado];
-                return (
-                  <div
-                    key={numero.valor}
-                    style={{
-                      width: px(larguraNumero),
-                      height: px(44),
-                      boxSizing: "border-box",
-                      marginRight: indiceNumero < linha.length - 1 ? px(10) : 0,
-                      borderRadius: px(12),
-                      border: `${px(1)}px solid ${estilo.borda}`,
-                      backgroundColor: estilo.fundo,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: estilo.texto,
-                      fontSize: px(16),
-                      fontWeight: 800,
-                    }}
-                  >
-                    {numero.valor}
-                  </div>
-                );
-              })}
+              {numero.valor}
             </div>
-          ))}
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginTop: px(20),
-            paddingTop: px(16),
-            borderTop: `${px(1)}px solid ${COR.borda}`,
-          }}
-        >
-          <div style={{ color: COR.texto, fontSize: px(16) }}>Cada número</div>
-          <div style={{ color: COR.titulo, fontSize: px(18), fontWeight: 800 }}>R$ 20,00</div>
-        </div>
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          position: "absolute",
-          bottom: -px(24),
-          left: -px(12),
-          alignItems: "center",
-          backgroundColor: COR.superficie,
-          border: `${px(1)}px solid ${COR.borda}`,
-          borderRadius: px(16),
-          padding: `${px(12)}px ${px(16)}px`,
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            width: px(40),
-            height: px(40),
-            marginRight: px(12),
-            borderRadius: 999,
-            backgroundColor: COR.verdeClaro,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <svg
-            width={px(22)}
-            height={px(22)}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke={COR.verde}
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-            <path d="m9 11 3 3L22 4" />
-          </svg>
-        </div>
-        <div style={{ color: COR.titulo, fontSize: px(16), fontWeight: 800 }}>
-          Pagamento confirmado!
-        </div>
+          );
+        })}
       </div>
     </div>
   );

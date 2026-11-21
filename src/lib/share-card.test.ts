@@ -92,20 +92,27 @@ describe("textos do card", () => {
   });
 });
 
-describe("cartela da home como fundo do card", () => {
-  it("usa a cartela maior nos cards verticais longos", () => {
-    expect(configuracaoCard("whatsapp", "direct")!.fundoCartela.largura).toBeGreaterThan(
-      configuracaoCard("instagram", "direct")!.fundoCartela.largura
+describe("borda da cartela da home no card", () => {
+  it("usa uma linha de números maior nos cards verticais longos", () => {
+    expect(configuracaoCard("whatsapp", "direct")!.bordaCartela.tamanhoNumero).toBeGreaterThan(
+      configuracaoCard("instagram", "direct")!.bordaCartela.tamanhoNumero
     );
-    expect(configuracaoCard("instagram", "story")!.fundoCartela.largura).toBeGreaterThan(
-      configuracaoCard("instagram", "direct")!.fundoCartela.largura
+    expect(configuracaoCard("instagram", "story")!.bordaCartela.tamanhoNumero).toBeGreaterThan(
+      configuracaoCard("instagram", "direct")!.bordaCartela.tamanhoNumero
     );
   });
 
-  it("usa a cartela menor no card horizontal do Facebook", () => {
-    expect(configuracaoCard("facebook", "direct")!.fundoCartela.largura).toBeLessThan(
-      configuracaoCard("whatsapp", "direct")!.fundoCartela.largura
+  it("usa uma borda compacta no card horizontal do Facebook", () => {
+    expect(configuracaoCard("facebook", "direct")!.bordaCartela.altura).toBeLessThan(
+      configuracaoCard("whatsapp", "direct")!.bordaCartela.altura
     );
+  });
+
+  it("mantém a borda discreta em todos os formatos", () => {
+    for (const rede of ["whatsapp", "facebook", "instagram"] as const) {
+      const formato = rede === "instagram" ? "story" : "direct";
+      expect(configuracaoCard(rede, formato)!.bordaCartela.opacidade).toBeLessThan(1);
+    }
   });
 });
 
