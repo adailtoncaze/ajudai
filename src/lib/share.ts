@@ -66,6 +66,11 @@ export function compartilhamentoNativo(url: string, arquivo?: File, agora = Date
   return dados;
 }
 
+/** Compartilhamento de imagem pura, usado no Instagram (que não abre links no card). */
+export function compartilhamentoImagem(arquivo: File): ShareData {
+  return { files: [arquivo] };
+}
+
 /** Texto da mensagem: legenda, chamada para ação e URL clicável. */
 export function textoComLink(url: string, legenda = "", agora = Date.now()) {
   const link = urlComPartilha(url, agora);

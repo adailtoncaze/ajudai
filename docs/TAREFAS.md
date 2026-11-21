@@ -576,10 +576,11 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 1. Manter o card do WhatsApp vertical (1080x1920) e reduzir a imagem do topo para 780px, liberando espaço para texto e prêmio.
 2. Aumentar a fonte da descrição para 40px e a imagem do prêmio para 180px apenas no card do WhatsApp.
 3. Enviar no compartilhamento nativo o PNG como arquivo, a legenda “Clique aqui para ajudar!” e a URL com `?wa=<timestamp>`. Com imagem anexada, o WhatsApp usa essa legenda como texto e a URL como link clicável.
-4. Fazer a página reconhecer o parâmetro `wa` e gerar a prévia com o card vertical e o título “Clique aqui para ajudar!” quando o link vier do WhatsApp.
+4. Fazer a página reconhecer o parâmetro `wa` e gerar a prévia com o card vertical quando o link vier do WhatsApp, mantendo o título da rifa para não duplicar o CTA da legenda.
 5. Derivar a URL pública de `NEXT_PUBLIC_SITE_URL`, `NEXT_SITE_URL` ou `VERCEL_URL`, e usar o host da requisição como último recurso, corrigindo os links gerados na Vercel.
 6. Manter CTA e URL no fallback `wa.me` (necessário quando não há Web Share) e atualizar as instruções/avisos do modal.
-7. Cobrir com testes a configuração do card, a fonte/prêmio maiores e o payload nativo sem legenda.
+7. No Instagram, usar `navigator.share` apenas com o PNG e manter somente a opção de baixar o card para publicação manual.
+8. Cobrir com testes a configuração do card, a fonte/prêmio maiores e os payloads de compartilhamento.
 
 **Decisão:** o WhatsApp não permite anexar imagem e, ao mesmo tempo, esconder a URL mantendo o link clicável. Com `files` + `url`, a URL aparece como texto; sem `files`, o card vira prévia clicável mas não é enviado como mídia. Após validação no celular, optou-se por priorizar imagem + link funcional: a legenda traz o CTA e a URL visível (clicável).
 

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { configuracaoCard, descricaoParaCard, resumirTexto } from "./share-card";
 import {
   TEXTO_CTA,
+  compartilhamentoImagem,
   compartilhamentoNativo,
   ctaComLink,
   legendaCard,
@@ -137,6 +138,11 @@ describe("URLs de compartilhamento", () => {
     expect(nativo.files).toEqual([arquivo]);
     expect(nativo.url).toBe("https://exemplo.test/r/rifa?wa=123");
     expect(nativo.text).toBe("Clique aqui para ajudar!");
+  });
+
+  it("compartilha apenas a imagem no Instagram, sem legenda nem URL", () => {
+    const arquivo = { name: "card.png" } as File;
+    expect(compartilhamentoImagem(arquivo)).toEqual({ files: [arquivo] });
   });
 
   it("usa o CTA exato e separa a URL no fallback do WhatsApp", () => {

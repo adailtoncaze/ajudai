@@ -28,7 +28,7 @@ export async function generateMetadata({ params, searchParams }: MetadataProps):
   const { slug } = await params;
   const busca = await searchParams;
   // O link compartilhado no WhatsApp leva ?wa=<timestamp>. Nesse caso a prévia usa
-  // o card vertical e o CTA como título, para virar um card clicável sem URL visível.
+  // o card vertical; o CTA fica na legenda da mensagem, então o título é o da rifa.
   const peloWhatsapp = busca.wa !== undefined;
   const raffle = await carregarRifa(slug);
 

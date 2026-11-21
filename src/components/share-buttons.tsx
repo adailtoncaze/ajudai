@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Download, Image as ImageIcon, X } from "lucide-react";
+import { Download, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { CopyLinkButton } from "@/components/copy-link-button";
 import {
@@ -9,9 +9,10 @@ import {
   InstagramIcon,
   WhatsAppIcon,
 } from "@/components/social-icons";
-import { baixarImagem, copiarImagem } from "@/lib/clipboard";
+import { baixarImagem } from "@/lib/clipboard";
 import { configuracaoCard, resumirTexto } from "@/lib/share-card";
 import {
+  compartilhamentoImagem,
   compartilhamentoNativo,
   legendaCard,
   shareCardUrl,
@@ -43,7 +44,7 @@ const INSTRUCOES: Record<RedeSocial, string> = {
   facebook:
     "Ao colar o link, o Facebook mostra este card. Você também pode publicar a imagem diretamente.",
   instagram:
-    "Escolha o formato, copie a imagem e cole no feed ou no story. O Instagram não abre links a partir do card.",
+    "Escolha o formato e compartilhe no Instagram ou baixe a imagem para publicar manualmente.",
 };
 
 function IconeRede({ rede, tamanho = 18 }: { rede: RedeSocial; tamanho?: number }) {
@@ -76,7 +77,7 @@ export function ShareButtons({ dados, text }: Props) {
 
   // O compartilhamento exige gesto do usuário: buscamos o PNG antes do clique.
   useEffect(() => {
-    if (redeAtiva !== "whatsapp") return;
+    if (redeAtiva !== "whatsapp" && redeAtiva !== "instagram") return;
     let cancelado = false;
 
     (async () => {
@@ -106,22 +107,13 @@ export function ShareButtons({ dados, text }: Props) {
     setFormato("feed");
     setAviso("");
     arquivoCardRef.current = null;
-    setPreparandoCard(rede === "whatsapp");
+    setPreparandoCard(rede === "whatsapp" || rede === "instagram");
     dialogRef.current?.showModal();
   }
 
   function baixarCard() {
     baixarImagem(cardUrl, nomeArquivo);
     setAviso("Card salvo no dispositivo.");
-  }
-
-  async function copiarCard() {
-    const copiou = await copiarImagem(cardUrl);
-    if (copiou) {
-      setAviso("Imagem copiada! Cole no seu story ou publicação.");
-    } else {
-      baixarCard();
-    }
   }
 
   async function buscarArquivoCard(): Promise<File> {
@@ -165,6 +157,32 @@ export function ShareButtons({ dados, text }: Props) {
     setAviso(
       "A conversa foi aberta com o CTA e o link. No computador a URL aparece no texto — use “Baixar card” se quiser anexar a imagem."
     );
+  }
+
+  async function compartilharInstagram() {
+    setAviso("");
+
+    if (typeof navigator === "undefined" || typeof navigator.share !== "function") {
+      setAviso("Seu navegador não oferece compartilhamento. Baixe o card para publicar no Instagram.");
+      return;
+    }
+
+    setPreparandoCard(true);
+    try {
+      const arquivo = arquivoCardRef.current ?? (await buscarArquivoCard());
+      arquivoCardRef.current = arquivo;
+      const suportaArquivo =
+        typeof navigator.canShare !== "function" || navigator.canShare({ files: [arquivo] });
+      if (!suportaArquivo) throw new Error("arquivo_nao_suportado");
+
+      await navigator.share(compartilhamentoImagem(arquivo));
+      setAviso("Escolha o Instagram para publicar no feed ou no story.");
+    } catch (erro) {
+      if ((erro as { name?: string })?.name === "AbortError") return;
+      setAviso("Não foi possível compartilhar. Baixe o card para publicar no Instagram.");
+    } finally {
+      setPreparandoCard(false);
+    }
   }
 
   return (
@@ -236,6 +254,8 @@ export function ShareButtons({ dados, text }: Props) {
                       onClick={() => {
                         setFormato(opcao);
                         setAviso("");
+                        arquivoCardRef.current = null;
+                        setPreparandoCard(true);
                       }}
                       className={`ui-btn ui-btn-secondary ${
                         formato === opcao ? "ui-toggle-ativo" : ""
@@ -285,9 +305,14 @@ export function ShareButtons({ dados, text }: Props) {
               )}
 
               {redeAtiva === "instagram" && (
-                <button type="button" onClick={copiarCard} className="ui-btn ui-btn-primary">
-                  <ImageIcon aria-hidden="true" size={18} />
-                  Copiar imagem
+                <button
+                  type="button"
+                  onClick={compartilharInstagram}
+                  disabled={preparandoCard}
+                  className="ui-btn ui-btn-primary"
+                >
+                  <IconeRede rede="instagram" />
+                  {preparandoCard ? "Preparando card..." : "Compartilhar no Instagram"}
                 </button>
               )}
 
