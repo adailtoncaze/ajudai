@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { brl } from "./format";
-import type { ConfigCard } from "./share-card";
+import { dataParaCard, type ConfigCard } from "./share-card";
 
 type Props = {
   titulo: string;
@@ -9,18 +9,49 @@ type Props = {
   premioTitulo: string | null;
   premioImagem: string | null;
   precoCents: number;
+  /** Data prevista do sorteio (`AAAA-MM-DD`), exibida ao lado do valor. */
+  drawDate: string | null;
   config: ConfigCard;
 };
 
 const COR = {
   fundo: "#FFF1EC",
   superficie: "#FFFFFF",
+  superficieMuda: "#E9EDF1",
   titulo: "#321C0F",
   texto: "#75543F",
+  textoSuave: "#7E604A",
   laranja: "#B23514",
+  laranjaForte: "#D6411A",
   laranjaVivo: "#F04E23",
   verde: "#1B744E",
+  linha: "#7C8791",
+  borda: "#DCE1E6",
 };
+
+// Reprodução da cartela ilustrativa da home: 12 números em duas linhas de seis.
+// Mantém as quatro semânticas da grade pública (livre, selecionado, reservado, pago).
+const NUMEROS_CARTELA = [
+  { valor: "07", estado: "pago" },
+  { valor: "12", estado: "selecionado" },
+  { valor: "18", estado: "livre" },
+  { valor: "23", estado: "livre" },
+  { valor: "31", estado: "reservado" },
+  { valor: "42", estado: "livre" },
+  { valor: "56", estado: "pago" },
+  { valor: "63", estado: "livre" },
+  { valor: "78", estado: "livre" },
+  { valor: "85", estado: "reservado" },
+  { valor: "91", estado: "livre" },
+  { valor: "99", estado: "livre" },
+] as const;
+
+const ESTILOS_NUMERO = {
+  livre: { fundo: COR.superficie, borda: COR.linha, texto: COR.titulo },
+  selecionado: { fundo: COR.laranjaForte, borda: COR.laranjaForte, texto: COR.superficie },
+  reservado: { fundo: COR.superficieMuda, borda: COR.linha, texto: COR.textoSuave },
+  pago: { fundo: COR.verde, borda: COR.verde, texto: COR.superficie },
+} as const;
 
 function Imagem({
   src,
@@ -198,8 +229,10 @@ function CardHorizontal({
   premioTitulo,
   premioImagem,
   precoCents,
+  drawDate,
   config,
 }: Props) {
+  const data = dataParaCard(drawDate);
   return (
     <div
       style={{
@@ -262,9 +295,12 @@ function CardHorizontal({
               tamanhoImagem={config.premioImagemTamanho}
             />
           </div>
+          <div style={{ display: "flex", marginTop: 18 }}>
+            <Cartela config={config} />
+          </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <Preco precoCents={precoCents} vertical={false} />
+          <ValorComData precoCents={precoCents} data={data} vertical={false} />
           <div style={{ color: COR.laranja, fontSize: 21, fontWeight: 800, marginTop: 12 }}>
             {config.rotulo}
           </div>
@@ -281,8 +317,10 @@ function CardVertical({
   premioTitulo,
   premioImagem,
   precoCents,
+  drawDate,
   config,
 }: Props) {
+  const data = dataParaCard(drawDate);
   return (
     <div
       style={{
@@ -368,6 +406,9 @@ function CardVertical({
             tamanhoImagem={config.premioImagemTamanho}
           />
         </div>
+        <div style={{ display: "flex", marginTop: 24 }}>
+          <Cartela config={config} />
+        </div>
       </div>
 
       <div
@@ -380,10 +421,137 @@ function CardVertical({
           flexDirection: "column",
         }}
       >
-        <Preco precoCents={precoCents} vertical />
+        <ValorComData precoCents={precoCents} data={data} vertical />
         <div style={{ color: COR.laranja, fontSize: 25, fontWeight: 800, marginTop: 14 }}>
           {config.rotulo}
         </div>
+      </div>
+    </div>
+  );
+}
+
+/** Valor em destaque com a data do sorteio logo ao lado. */
+function ValorComData({
+  precoCents,
+  data,
+  vertical,
+}: {
+  precoCents: number;
+  data: string | null;
+  vertical: boolean;
+}) {
+  return (
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <Preco precoCents={precoCents} vertical={vertical} />
+      {data && (
+        <div style={{ display: "flex", flexDirection: "column", marginLeft: vertical ? 22 : 16 }}>
+          <div
+            style={{
+              color: COR.texto,
+              fontSize: vertical ? 18 : 14,
+              fontWeight: 800,
+              letterSpacing: 2,
+            }}
+          >
+            SORTEIO
+          </div>
+          <div
+            style={{
+              color: COR.titulo,
+              fontSize: vertical ? 30 : 22,
+              fontWeight: 800,
+              marginTop: 4,
+            }}
+          >
+            {data}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Cartela da home em miniatura, entre o texto e o rodapé do card. */
+function Cartela({ config }: { config: ConfigCard }) {
+  const { cartela, vertical } = config;
+  const numeros = NUMEROS_CARTELA.slice(0, cartela.quantidade);
+  const linhas: (typeof numeros)[] = [];
+  for (let i = 0; i < numeros.length; i += cartela.colunas) {
+    linhas.push(numeros.slice(i, i + cartela.colunas));
+  }
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        width: "100%",
+        height: cartela.altura,
+        boxSizing: "border-box",
+        backgroundColor: COR.superficie,
+        border: `2px solid ${COR.borda}`,
+        borderRadius: vertical ? 24 : 18,
+        padding: vertical ? "14px 18px" : "10px 14px",
+      }}
+    >
+      {vertical && (
+        <div
+          style={{
+            color: COR.laranja,
+            fontSize: 15,
+            fontWeight: 800,
+            letterSpacing: 3,
+            marginBottom: 10,
+          }}
+        >
+          CARTELA DA RIFA
+        </div>
+      )}
+      {linhas.map((linha, indiceLinha) => (
+        <div
+          key={indiceLinha}
+          style={{ display: "flex", marginBottom: indiceLinha < linhas.length - 1 ? 8 : 0 }}
+        >
+          {linha.map((numero, indiceNumero) => {
+            const estilo = ESTILOS_NUMERO[numero.estado];
+            return (
+              <div
+                key={numero.valor}
+                style={{
+                  width: cartela.tamanhoNumero,
+                  height: cartela.tamanhoNumero,
+                  boxSizing: "border-box",
+                  marginRight: indiceNumero < linha.length - 1 ? 8 : 0,
+                  borderRadius: 12,
+                  border: `2px solid ${estilo.borda}`,
+                  backgroundColor: estilo.fundo,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: estilo.texto,
+                  fontSize: cartela.fonteNumero,
+                  fontWeight: 800,
+                }}
+              >
+                {numero.valor}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+      <div
+        style={{
+          display: "flex",
+          width: "70%",
+          height: 6,
+          marginTop: vertical ? 10 : 8,
+          borderRadius: 999,
+          backgroundColor: COR.superficieMuda,
+          overflow: "hidden",
+        }}
+      >
+        <div style={{ display: "flex", width: "43%", height: 6, backgroundColor: COR.laranjaVivo }} />
       </div>
     </div>
   );

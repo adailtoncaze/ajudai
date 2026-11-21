@@ -54,6 +54,7 @@ export async function GET(request: Request, { params }: Props) {
         premioTitulo: resumirTexto(rifa.prize_title?.trim() || "Prêmio da rifa", config.premioTituloMax),
         premioImagem,
         precoCents: rifa.price_cents,
+        drawDate: rifa.draw_date,
         config,
       }),
       {

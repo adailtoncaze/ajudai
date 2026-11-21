@@ -10,7 +10,7 @@ const variantes = [
   ["instagram", "story"],
 ] as const;
 
-it.each(variantes)("renderiza o card de %s (%s)", async (rede, formato) => {
+it.each(variantes)("renderiza o card de %s (%s) com data do sorteio", async (rede, formato) => {
   const config = configuracaoCard(rede, formato)!;
   const resposta = new ImageResponse(
     elementoCard({
@@ -26,6 +26,26 @@ it.each(variantes)("renderiza o card de %s (%s)", async (rede, formato) => {
       premioTitulo: "Headphone Bluetooth Sem Fio",
       premioImagem: null,
       precoCents: 1000,
+      drawDate: "2026-12-20",
+      config,
+    }),
+    { width: config.largura, height: config.altura }
+  );
+  const bytes = await resposta.arrayBuffer();
+  expect(bytes.byteLength).toBeGreaterThan(0);
+});
+
+it.each(variantes)("renderiza o card de %s (%s) sem data do sorteio", async (rede, formato) => {
+  const config = configuracaoCard(rede, formato)!;
+  const resposta = new ImageResponse(
+    elementoCard({
+      titulo: "Rifa da escola",
+      descricao: "Participe e ajude!",
+      imagem: null,
+      premioTitulo: null,
+      premioImagem: null,
+      precoCents: 1000,
+      drawDate: null,
       config,
     }),
     { width: config.largura, height: config.altura }

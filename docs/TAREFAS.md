@@ -611,3 +611,22 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 - No desktop ou sem suporte a arquivo, o card é salvo, o link copiado e o criador de Stories é aberto, com aviso em `role="status"`.
 - Cancelar a folha não muda a página nem mostra aviso de erro.
 - `npm run build`, `npm run lint` e `npm test` passam.
+
+---
+
+## [x] T35 — Data do sorteio e cartela ilustrativa em todos os cards
+
+**Fazer**
+1. Passar `draw_date` da rifa para o gerador de imagem e exibir a data formatada ao lado da tag do valor, nas quatro variantes (WhatsApp, Facebook, Instagram Direct e Instagram Story).
+2. Reproduzir a cartela ilustrativa da home no card, entre o texto e o rodapé, com os quatro estados de número (livre, selecionado, reservado e pago) e a barra de progresso.
+3. Dimensionar a cartela por formato: grade completa (12 números em 6 colunas) nos cards verticais e faixa compacta (8 números em uma linha) no card horizontal do Facebook; reduzir a descrição nesse formato para preservar o espaçamento.
+4. Ocultar a data quando a rifa não tiver `draw_date`, sem deixar espaço reservado.
+5. Cobrir com testes a formatação da data, as configurações da cartela e a renderização das quatro variantes com e sem data.
+
+**Decisão:** o valor continua sendo calculado no servidor e a data vem de `draw_date` (data prevista, sem horário); `drawn_at` permanece como resultado real e não entra no card. A cartela é decorativa e usa os mesmos números e cores da home, sem dados do comprador.
+
+**Critérios de aceite**
+- A data do sorteio aparece ao lado do valor em todas as imagens de compartilhamento.
+- A cartela da home aparece em todos os cards, com proporções adequadas a cada rede.
+- Rifas sem data não exibem o rótulo "Sorteio".
+- `npm run build`, `npm run lint` e `npm test` passam.

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { configuracaoCard, descricaoParaCard, resumirTexto } from "./share-card";
+import { configuracaoCard, dataParaCard, descricaoParaCard, resumirTexto } from "./share-card";
 import {
   TEXTO_CTA,
   compartilhamentoLink,
@@ -84,6 +84,30 @@ describe("textos do card", () => {
   it("mantém descrições longas quando cabem no formato", () => {
     const descricao = "Participe da nossa rifa solidária e ajude a Lilica! ".repeat(4).trim();
     expect(descricaoParaCard(descricao, null, 230)).toBe(descricao);
+  });
+
+  it("formata a data do sorteio para o card e omite quando não há data", () => {
+    expect(dataParaCard("2026-12-20")).toBe("20/12/2026");
+    expect(dataParaCard(null)).toBeNull();
+  });
+});
+
+describe("cartela ilustrativa do card", () => {
+  it("usa a grade completa nos cards verticais", () => {
+    for (const rede of ["whatsapp", "instagram"] as const) {
+      const formato = rede === "instagram" ? "story" : "direct";
+      expect(configuracaoCard(rede, formato)!.cartela).toMatchObject({
+        quantidade: 12,
+        colunas: 6,
+      });
+    }
+  });
+
+  it("usa uma faixa compacta no card horizontal do Facebook", () => {
+    expect(configuracaoCard("facebook", "direct")!.cartela).toMatchObject({
+      quantidade: 8,
+      colunas: 8,
+    });
   });
 });
 

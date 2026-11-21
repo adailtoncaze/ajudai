@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 const éWindows = process.platform === "win32";
 const npm = éWindows ? "npm.cmd" : "npm";
 
-// Arquivos desta tarefa (troca de logo e nome da aplicação).
+// Arquivos já revisados nas tarefas realizadas.
 // Outros arquivos pendentes não entram no commit automático.
 const arquivos = [
   "AGENTS.md",
@@ -14,6 +14,11 @@ const arquivos = [
   "docs/TAREFAS.md",
   "package.json",
   "package-lock.json",
+  "src/app/api/raffles/[slug]/share-card/route.ts",
+  "src/lib/share-card.ts",
+  "src/lib/share-card-image.tsx",
+  "src/lib/share-card.test.ts",
+  "src/lib/share-card-render.test.tsx",
   "src/app/entrar/page.tsx",
   "src/app/page.tsx",
   "src/app/globals.css",
