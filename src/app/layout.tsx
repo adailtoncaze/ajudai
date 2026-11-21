@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
+import { publicSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,17 +14,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
-  ),
-  title: {
-    default: "Rifa Solidária",
-    template: "%s | Rifa Solidária",
-  },
-  description: "Rifas beneficentes online com pagamento por Pix.",
-  applicationName: "Rifa Solidária",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    metadataBase: new URL(await publicSiteUrl()),
+    title: {
+      default: "Rifa Solidária",
+      template: "%s | Rifa Solidária",
+    },
+    description: "Rifas beneficentes online com pagamento por Pix.",
+    applicationName: "Rifa Solidária",
+  };
+}
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

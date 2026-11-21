@@ -9,8 +9,8 @@ import { Logo } from "@/components/logo";
 import { Pagination } from "@/components/pagination";
 import { brl } from "@/lib/format";
 import { ITENS_POR_PAGINA } from "@/lib/pagination";
+import { publicSiteUrl } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
-import { publicRaffleUrl } from "@/lib/validation";
 
 export const metadata: Metadata = {
   title: "Painel do organizador",
@@ -190,6 +190,7 @@ async function ListaRifas({ searchParams }: { searchParams: Promise<PainelSearch
   }
 
   const rifas = (data ?? []) as unknown as RifaResumo[];
+  const siteUrl = await publicSiteUrl();
 
   if (total === 0) {
     return (
@@ -284,7 +285,7 @@ async function ListaRifas({ searchParams }: { searchParams: Promise<PainelSearch
                     Abrir rifa
                     <ArrowUpRight aria-hidden="true" size={17} />
                   </Link>
-                  <CopyLinkButton url={publicRaffleUrl(rifa.slug)} />
+                  <CopyLinkButton url={`${siteUrl}/r/${rifa.slug}`} />
                   <Link
                     href={`/painel/rifas/${rifa.id}/editar`}
                     className="ui-btn ui-btn-ghost"

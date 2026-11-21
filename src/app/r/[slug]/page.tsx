@@ -14,7 +14,7 @@ import {
   getPublicWinner,
 } from "@/lib/raffles";
 import { TEXTO_CTA, shareCardUrl } from "@/lib/share";
-import { publicRaffleUrl } from "@/lib/validation";
+import { publicRaffleUrl } from "@/lib/site-url";
 
 type Props = { params: Promise<{ slug: string }> };
 type MetadataProps = Props & {
@@ -107,7 +107,7 @@ async function ConteudoRifa({ params }: Props) {
   const total = raffle.total_numbers;
   const reservados = taken.length;
   const percentual = total > 0 ? Math.round((reservados / total) * 100) : 0;
-  const url = publicRaffleUrl(slug);
+  const url = await publicRaffleUrl(slug);
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">

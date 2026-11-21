@@ -132,11 +132,6 @@ export function isoToSaoPauloLocalInput(iso: string): string {
   return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
 }
 
-export function publicRaffleUrl(slug: string): string {
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/+$/, "");
-  return `${siteUrl}/r/${slug}`;
-}
-
 const titleField = z
   .string()
   .trim()

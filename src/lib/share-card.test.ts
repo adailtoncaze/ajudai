@@ -50,6 +50,8 @@ describe("configuração do card de compartilhamento", () => {
   it("usa fonte maior e prêmio maior no card do WhatsApp", () => {
     const whatsapp = configuracaoCard("whatsapp", "feed")!;
     const story = configuracaoCard("instagram", "story")!;
+    expect(whatsapp.descricaoFonte).toBe(40);
+    expect(whatsapp.premioImagemTamanho).toBe(180);
     expect(whatsapp.descricaoFonte).toBeGreaterThan(story.descricaoFonte);
     expect(whatsapp.premioImagemTamanho).toBeGreaterThan(story.premioImagemTamanho);
     expect(whatsapp.descricaoMax).toBeGreaterThanOrEqual(340);
@@ -120,10 +122,13 @@ describe("URLs de compartilhamento", () => {
     );
   });
 
-  it("envia somente a URL no compartilhamento nativo, sem texto visível", () => {
+  it("envia a URL sem repetir o CTA como legenda no compartilhamento nativo", () => {
     const nativo = compartilhamentoNativo("https://exemplo.test/r/rifa", 123);
-    expect(nativo).toEqual({ url: "https://exemplo.test/r/rifa?wa=123" });
-    expect(Object.keys(nativo)).not.toContain("text");
+    expect(nativo).toEqual({
+      title: "",
+      text: "",
+      url: "https://exemplo.test/r/rifa?wa=123",
+    });
   });
 
   it("usa o CTA exato e separa a URL no fallback do WhatsApp", () => {

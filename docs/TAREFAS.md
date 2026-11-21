@@ -573,17 +573,19 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 ## [x] T33 — Card vertical e legenda enxuta no WhatsApp
 
 **Fazer**
-1. Manter o card do WhatsApp vertical (1080x1920) e reduzir a imagem do topo para liberar espaço para texto e prêmio.
-2. Aumentar a fonte da descrição para 36px e a imagem do prêmio para 150px apenas no card do WhatsApp.
-3. Parar de enviar o PNG como arquivo no compartilhamento nativo: passar somente a URL com `?wa=<timestamp>`.
+1. Manter o card do WhatsApp vertical (1080x1920) e reduzir a imagem do topo para 780px, liberando espaço para texto e prêmio.
+2. Aumentar a fonte da descrição para 40px e a imagem do prêmio para 180px apenas no card do WhatsApp.
+3. Enviar no compartilhamento nativo a URL com `?wa=<timestamp>` e `title`/`text` vazios, para o navegador não repetir o CTA como legenda.
 4. Fazer a página reconhecer o parâmetro `wa` e gerar a prévia com o card vertical e o título “Clique aqui para ajudar!” quando o link vier do WhatsApp.
-5. Manter CTA e URL no fallback `wa.me` (necessário quando não há Web Share) e atualizar as instruções/avisos do modal.
-6. Cobrir com testes a configuração do card, a fonte/prêmio maiores e o payload nativo sem texto.
+5. Derivar a URL pública do host da requisição quando `NEXT_PUBLIC_SITE_URL` estiver ausente ou apontando para localhost, corrigindo os links gerados na Vercel.
+6. Manter CTA e URL no fallback `wa.me` (necessário quando não há Web Share) e atualizar as instruções/avisos do modal.
+7. Cobrir com testes a configuração do card, a fonte/prêmio maiores e o payload nativo sem legenda.
 
-**Decisão:** o WhatsApp não permite transformar texto arbitrário de legenda em hyperlink e, quando recebe `files` + `url`, acaba exibindo a URL como texto. A forma confiável de ter um card clicável sem mostrar o endereço é compartilhar apenas a URL e deixar o WhatsApp gerar a prévia rica: o card vira o botão clicável e o título da prévia é o CTA.
+**Decisão:** o WhatsApp não permite transformar texto arbitrário de legenda em hyperlink e, quando recebe `files` + `url`, acaba exibindo a URL como texto. A forma confiável de ter um card clicável sem mostrar o endereço é compartilhar apenas a URL e deixar o WhatsApp gerar a prévia rica: o card vira o botão clicável e o título da prévia é o CTA. Título e texto vazios no payload evitam que o CTA apareça duplicado.
 
 **Critérios de aceite**
-- O card do WhatsApp é vertical (1080x1920), com descrição em 36px e imagem do prêmio em 150px.
-- No celular, a mensagem mostra a prévia clicável do card, com o título “Clique aqui para ajudar!” e sem URL visível.
+- O card do WhatsApp é vertical (1080x1920), com descrição em 40px e imagem do prêmio em 180px.
+- No celular, a mensagem mostra uma única ocorrência do CTA, na prévia clicável do card, sem URL visível.
+- Os links gerados na Vercel usam o domínio hospedado, não localhost.
 - No fallback `wa.me`, CTA e URL continuam presentes para abrir a rifa.
 - `npm run build`, `npm run lint` e `npm test` passam.
