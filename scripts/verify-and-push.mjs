@@ -28,13 +28,19 @@ const arquivos = [
 // `:(literal)` evita que colchetes de rotas dinâmicas sejam tratados como curinga do git.
 const caminhos = arquivos.map((arquivo) => `:(literal)${arquivo}`);
 
-function executar(comando, argumentos, opcoes = {}) {
-  const resultado = spawnSync(comando, argumentos, {
+function executar(comando, argumentos = [], opcoes = {}) {
+  const configuração = {
     cwd: process.cwd(),
     encoding: opcoes.encoding,
-    shell: opcoes.shell ?? false,
     stdio: opcoes.stdio ?? "inherit",
-  });
+  };
+
+  // No Windows, npm.cmd exige shell. Passar o comando como string evita o aviso
+  // DEP0190 (args + shell: true); no Unix, mantemos args separados.
+  const resultado =
+    opcoes.shell ?? false
+      ? spawnSync(`${comando} ${argumentos.join(" ")}`, { ...configuração, shell: true })
+      : spawnSync(comando, argumentos, configuração);
 
   if (resultado.error) throw resultado.error;
   if (resultado.status !== 0) process.exit(resultado.status ?? 1);
