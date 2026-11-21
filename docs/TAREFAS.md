@@ -567,3 +567,20 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 - O compartilhamento nativo é tentado com o PNG real.
 - O aviso do fallback orienta a anexar o card manualmente.
 - `npm run build`, `npm run lint` e `npm test` passam.
+
+---
+
+## [x] T33 — Card vertical e legenda enxuta no WhatsApp
+
+**Fazer**
+1. Tornar o card do WhatsApp vertical (1080x1920), aproveitando a tela do celular e aumentando o espaço para título, descrição e prêmio.
+2. Enviar no compartilhamento nativo apenas a imagem e um CTA curto com o link clicável; remover título, descrição, prêmio e valor do texto enviado.
+3. Usar o mesmo CTA no fallback `wa.me` e atualizar as instruções/avisos do modal.
+4. Cobrir com testes a configuração vertical e a mensagem sem legenda.
+
+**Decisão:** o PNG já contém todas as informações da rifa. Repetir esses dados na legenda dificulta a leitura no WhatsApp; o texto abaixo da imagem serve apenas para abrir a página. O formato 9:16 é o mesmo do story do Instagram e foi reaproveitado no card do WhatsApp.
+
+**Critérios de aceite**
+- A imagem enviada no WhatsApp é vertical (1080x1920).
+- A mensagem enviada contém somente o CTA com o link clicável, sem a legenda completa.
+- `npm run build`, `npm run lint` e `npm test` passam.

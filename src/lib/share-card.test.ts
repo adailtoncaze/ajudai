@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { configuracaoCard, descricaoParaCard, resumirTexto } from "./share-card";
 import {
+  ctaComLink,
   legendaCard,
   shareCardUrl,
   shareLinks,
@@ -9,12 +10,15 @@ import {
 } from "./share";
 
 describe("configuração do card de compartilhamento", () => {
-  it("usa 1200x630 para WhatsApp e Facebook", () => {
+  it("usa card vertical para o WhatsApp, aproveitando a tela do celular", () => {
     expect(configuracaoCard("whatsapp", "feed")).toMatchObject({
-      largura: 1200,
-      altura: 630,
-      vertical: false,
+      largura: 1080,
+      altura: 1920,
+      vertical: true,
     });
+  });
+
+  it("mantém 1200x630 para o Facebook", () => {
     expect(configuracaoCard("facebook", "feed")).toMatchObject({
       largura: 1200,
       altura: 630,
@@ -42,7 +46,7 @@ describe("configuração do card de compartilhamento", () => {
   });
 
   it("reserva mais espaço para a descrição, especialmente no story", () => {
-    expect(configuracaoCard("whatsapp", "feed")!.descricaoMax).toBeGreaterThanOrEqual(220);
+    expect(configuracaoCard("whatsapp", "feed")!.descricaoMax).toBeGreaterThanOrEqual(400);
     expect(configuracaoCard("instagram", "feed")!.descricaoMax).toBeGreaterThanOrEqual(290);
     expect(configuracaoCard("instagram", "story")!.descricaoMax).toBeGreaterThanOrEqual(400);
   });
@@ -103,13 +107,19 @@ describe("URLs de compartilhamento", () => {
     expect(legenda).not.toContain("números");
   });
 
-  it("monta texto e link do WhatsApp com parâmetro para renovar a prévia", () => {
+  it("monta texto e link com legenda e parâmetro para renovar a prévia", () => {
     const texto = textoComLink("https://exemplo.test/r/rifa", "Rifa da escola", 123);
     expect(texto).toContain(
       "👉 Clique aqui para ajudar e participar: https://exemplo.test/r/rifa?wa=123"
     );
-    expect(textoDoLink(whatsappShareLink("https://exemplo.test/r/rifa", "Rifa da escola", 123))).toBe(
-      texto
+  });
+
+  it("envia no WhatsApp apenas o CTA clicável, sem a legenda da imagem", () => {
+    const texto = ctaComLink("https://exemplo.test/r/rifa", 123);
+    expect(texto).toBe(
+      "👉 Clique aqui para ajudar e participar: https://exemplo.test/r/rifa?wa=123"
     );
+    expect(textoDoLink(whatsappShareLink("https://exemplo.test/r/rifa", 123))).toBe(texto);
+    expect(texto).not.toContain("Rifa da escola");
   });
 });

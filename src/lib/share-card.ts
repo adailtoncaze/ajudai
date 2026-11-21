@@ -14,14 +14,14 @@ export type ConfigCard = {
 
 const CONFIGURACOES: Record<string, ConfigCard> = {
   whatsapp: {
-    largura: 1200,
-    altura: 630,
-    alturaImagem: 0,
-    tituloMax: 52,
-    descricaoMax: 230,
-    premioTituloMax: 42,
-    vertical: false,
-    rotulo: "Compartilhe com seus amigos",
+    largura: 1080,
+    altura: 1920,
+    alturaImagem: 950,
+    tituloMax: 62,
+    descricaoMax: 420,
+    premioTituloMax: 50,
+    vertical: true,
+    rotulo: "Toque no link para participar",
   },
   facebook: {
     largura: 1200,

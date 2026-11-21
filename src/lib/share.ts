@@ -23,7 +23,7 @@ type DadosLegenda = {
   precoCents: number;
 };
 
-/** Legenda enviada junto com a imagem do card; a URL é acrescentada por `whatsappShareLink`. */
+/** Legenda completa, usada em textos que não acompanham a imagem do card. */
 export function legendaCard(dados: DadosLegenda) {
   return [
     `🎟️ ${dados.titulo.trim()}`,
@@ -35,27 +35,31 @@ export function legendaCard(dados: DadosLegenda) {
     .join("\n");
 }
 
+const CTA = "👉 Clique aqui para ajudar e participar";
+
+function linkComCacheBuster(url: string, agora: number) {
+  const separador = url.includes("?") ? "&" : "?";
+  return `${url}${separador}wa=${agora}`;
+}
+
+/** CTA curto com o link clicável, usado quando a imagem já mostra os detalhes da rifa. */
+export function ctaComLink(url: string, agora = Date.now()) {
+  return `${CTA}: ${linkComCacheBuster(url, agora)}`;
+}
+
 /** Texto da mensagem: legenda, chamada para ação e URL clicável. */
 export function textoComLink(url: string, legenda = "", agora = Date.now()) {
-  const separador = url.includes("?") ? "&" : "?";
-  const urlComCacheBuster = `${url}${separador}wa=${agora}`;
-  return legenda.trim()
-    ? `${legenda.trim()}\n\n👉 Clique aqui para ajudar e participar: ${urlComCacheBuster}`
-    : urlComCacheBuster;
+  const link = linkComCacheBuster(url, agora);
+  return legenda.trim() ? `${legenda.trim()}\n\n${CTA}: ${link}` : link;
 }
 
 /**
- * Link do WhatsApp com a legenda e a URL da rifa. O WhatsApp transforma a URL em link clicável.
+ * Link do WhatsApp com apenas o CTA e a URL da rifa. A imagem enviada como mídia já traz
+ * título, descrição, prêmio e valor; o texto abaixo dela só precisa abrir a página.
  * O parâmetro único evita reaproveitar um preview antigo da mesma página.
  */
-export function whatsappShareLink(
-  url: string,
-  legenda = "",
-  agora = Date.now()
-) {
-  return `https://wa.me/?text=${encodeURIComponent(
-    textoComLink(url, legenda, agora)
-  )}`;
+export function whatsappShareLink(url: string, agora = Date.now()) {
+  return `https://wa.me/?text=${encodeURIComponent(ctaComLink(url, agora))}`;
 }
 
 /** Card gerado no servidor: serve de preview no modal e de imagem Open Graph. */

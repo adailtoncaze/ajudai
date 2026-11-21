@@ -12,10 +12,10 @@ import {
 import { baixarImagem, copiarImagem } from "@/lib/clipboard";
 import { configuracaoCard, resumirTexto } from "@/lib/share-card";
 import {
+  ctaComLink,
   legendaCard,
   shareCardUrl,
   shareLinks,
-  textoComLink,
   whatsappShareLink,
   type FormatoCard,
   type RedeSocial,
@@ -40,7 +40,7 @@ const NOMES: Record<RedeSocial, string> = {
 
 const INSTRUCOES: Record<RedeSocial, string> = {
   whatsapp:
-    "No celular, a imagem do card vai junto com a mensagem. No computador, copie/anexe o card manualmente — o WhatsApp não anexa imagem pelo link. Abaixo dela fica o link clicável: “Clique aqui para ajudar e participar”.",
+    "No celular, o card vertical vai como imagem e o texto abaixo dele traz só o link clicável para abrir a rifa. No computador, copie/anexe o card manualmente — o WhatsApp não anexa imagem pelo link.",
   facebook:
     "Ao colar o link, o Facebook mostra este card. Você também pode publicar a imagem diretamente.",
   instagram:
@@ -69,9 +69,9 @@ export function ShareButtons({ dados, text }: Props) {
       premioTitulo: dados.premioTitulo,
       precoCents: dados.precoCents,
     });
-  const linkWhatsapp = whatsappShareLink(dados.url, legenda);
+  const linkWhatsapp = whatsappShareLink(dados.url);
   const linkFacebook = shareLinks(dados.url, legenda).facebook;
-  const mensagemNativa = textoComLink(dados.url, legenda);
+  const mensagemNativa = ctaComLink(dados.url);
   const config = redeAtiva ? configuracaoCard(redeAtiva, formato) : null;
   const cardUrl = shareCardUrl(dados.slug, redeAtiva ?? "facebook", formato);
   const nomeArquivo = `card-rifa-${dados.slug}-${redeAtiva ?? "facebook"}-${formato}.png`;
@@ -166,8 +166,8 @@ export function ShareButtons({ dados, text }: Props) {
     if (!copiou) baixarImagem(cardUrl, nomeArquivo);
     setAviso(
       copiou
-        ? "O WhatsApp não anexa imagem automaticamente por aqui. Cole o card copiado na conversa; o link clicável já está na mensagem."
-        : "O WhatsApp não anexa imagem automaticamente por aqui. Anexe o card salvo na conversa; o link clicável já está na mensagem."
+        ? "O WhatsApp não anexa imagem automaticamente por aqui. Cole o card copiado na conversa — a mensagem terá somente o link clicável."
+        : "O WhatsApp não anexa imagem automaticamente por aqui. Anexe o card salvo na conversa — a mensagem terá somente o link clicável."
     );
   }
 
