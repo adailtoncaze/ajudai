@@ -7,6 +7,8 @@ export type ConfigCard = {
   alturaImagem: number;
   tituloMax: number;
   descricaoMax: number;
+  /** Tamanho da fonte da descrição nos cards verticais. */
+  descricaoFonte: number;
   premioTituloMax: number;
   vertical: boolean;
   rotulo: string;
@@ -18,7 +20,8 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     altura: 1920,
     alturaImagem: 950,
     tituloMax: 62,
-    descricaoMax: 420,
+    descricaoMax: 380,
+    descricaoFonte: 32,
     premioTituloMax: 50,
     vertical: true,
     rotulo: "Toque no link para participar",
@@ -29,6 +32,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     alturaImagem: 0,
     tituloMax: 54,
     descricaoMax: 230,
+    descricaoFonte: 21,
     premioTituloMax: 42,
     vertical: false,
     rotulo: "Curta e compartilhe",
@@ -39,6 +43,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     alturaImagem: 540,
     tituloMax: 58,
     descricaoMax: 300,
+    descricaoFonte: 26,
     premioTituloMax: 46,
     vertical: true,
     rotulo: "Chame no Direct para participar",
@@ -49,6 +54,7 @@ const CONFIGURACOES: Record<string, ConfigCard> = {
     alturaImagem: 950,
     tituloMax: 62,
     descricaoMax: 420,
+    descricaoFonte: 26,
     premioTituloMax: 50,
     vertical: true,
     rotulo: "Chame no Direct para participar",

@@ -574,13 +574,15 @@ Se a tarefa ficar grande demais, peça ao agente para dividi-la em passos menore
 
 **Fazer**
 1. Tornar o card do WhatsApp vertical (1080x1920), aproveitando a tela do celular e aumentando o espaço para título, descrição e prêmio.
-2. Enviar no compartilhamento nativo apenas a imagem e um CTA curto com o link clicável; remover título, descrição, prêmio e valor do texto enviado.
-3. Usar o mesmo CTA no fallback `wa.me` e atualizar as instruções/avisos do modal.
-4. Cobrir com testes a configuração vertical e a mensagem sem legenda.
+2. Aumentar a fonte da descrição apenas no card do WhatsApp (32px), reduzindo o limite de caracteres para manter o layout dentro da imagem.
+3. Enviar no compartilhamento nativo a imagem, o texto exato “Clique aqui para ajudar!” e a URL no campo `url` do Web Share API, para que o WhatsApp a exiba como link clicável sem mostrar o endereço no texto.
+4. Manter CTA e URL no fallback `wa.me` (necessário para abrir a rifa quando não há compartilhamento com arquivo) e atualizar as instruções/avisos do modal.
+5. Cobrir com testes a configuração vertical, a fonte maior, o CTA exato e a separação entre texto e URL.
 
-**Decisão:** o PNG já contém todas as informações da rifa. Repetir esses dados na legenda dificulta a leitura no WhatsApp; o texto abaixo da imagem serve apenas para abrir a página. O formato 9:16 é o mesmo do story do Instagram e foi reaproveitado no card do WhatsApp.
+**Decisão:** o PNG já contém todas as informações da rifa. Repetir esses dados na legenda dificulta a leitura no WhatsApp. A URL como campo próprio do `navigator.share` é a forma de torná-la clicável sem exibir o endereço no texto. No fallback `wa.me`, o endereço precisa continuar visível — é a única forma de abrir a página.
 
 **Critérios de aceite**
-- A imagem enviada no WhatsApp é vertical (1080x1920).
-- A mensagem enviada contém somente o CTA com o link clicável, sem a legenda completa.
+- A imagem enviada no WhatsApp é vertical (1080x1920), com a descrição em fonte maior.
+- O texto abaixo da imagem é exatamente “Clique aqui para ajudar!”, sem URL visível.
+- A URL da rifa é enviada como link clicável no compartilhamento nativo.
 - `npm run build`, `npm run lint` e `npm test` passam.

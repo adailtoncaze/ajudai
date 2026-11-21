@@ -12,7 +12,8 @@ import {
 import { baixarImagem, copiarImagem } from "@/lib/clipboard";
 import { configuracaoCard, resumirTexto } from "@/lib/share-card";
 import {
-  ctaComLink,
+  TEXTO_CTA,
+  compartilhamentoNativo,
   legendaCard,
   shareCardUrl,
   shareLinks,
@@ -40,7 +41,7 @@ const NOMES: Record<RedeSocial, string> = {
 
 const INSTRUCOES: Record<RedeSocial, string> = {
   whatsapp:
-    "No celular, o card vertical vai como imagem e o texto abaixo dele traz só o link clicável para abrir a rifa. No computador, copie/anexe o card manualmente — o WhatsApp não anexa imagem pelo link.",
+    `No celular, o card vertical vai como imagem, o link clicável vem junto e o texto abaixo dele é só “${TEXTO_CTA}”. No computador, copie/anexe o card manualmente — o WhatsApp não anexa imagem pelo link.`,
   facebook:
     "Ao colar o link, o Facebook mostra este card. Você também pode publicar a imagem diretamente.",
   instagram:
@@ -71,7 +72,7 @@ export function ShareButtons({ dados, text }: Props) {
     });
   const linkWhatsapp = whatsappShareLink(dados.url);
   const linkFacebook = shareLinks(dados.url, legenda).facebook;
-  const mensagemNativa = ctaComLink(dados.url);
+  const mensagemNativa = compartilhamentoNativo(dados.url);
   const config = redeAtiva ? configuracaoCard(redeAtiva, formato) : null;
   const cardUrl = shareCardUrl(dados.slug, redeAtiva ?? "facebook", formato);
   const nomeArquivo = `card-rifa-${dados.slug}-${redeAtiva ?? "facebook"}-${formato}.png`;
@@ -149,7 +150,10 @@ export function ShareButtons({ dados, text }: Props) {
         await navigator.share({
           files: [arquivo],
           title: dados.titulo,
-          text: mensagemNativa,
+          text: mensagemNativa.text,
+          // Enviar a URL como campo próprio faz o WhatsApp exibi-la como link clicável,
+          // sem mostrar o endereço no texto abaixo da imagem.
+          url: mensagemNativa.url,
         });
         setAviso("Escolha o WhatsApp e envie a conversa.");
         return;
@@ -166,8 +170,8 @@ export function ShareButtons({ dados, text }: Props) {
     if (!copiou) baixarImagem(cardUrl, nomeArquivo);
     setAviso(
       copiou
-        ? "O WhatsApp não anexa imagem automaticamente por aqui. Cole o card copiado na conversa — a mensagem terá somente o link clicável."
-        : "O WhatsApp não anexa imagem automaticamente por aqui. Anexe o card salvo na conversa — a mensagem terá somente o link clicável."
+        ? "O WhatsApp não anexa imagem automaticamente por aqui. Cole o card copiado na conversa — a mensagem terá o CTA e o link clicável."
+        : "O WhatsApp não anexa imagem automaticamente por aqui. Anexe o card salvo na conversa — a mensagem terá o CTA e o link clicável."
     );
   }
 

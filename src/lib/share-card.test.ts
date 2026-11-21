@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { configuracaoCard, descricaoParaCard, resumirTexto } from "./share-card";
 import {
+  TEXTO_CTA,
+  compartilhamentoNativo,
   ctaComLink,
   legendaCard,
   shareCardUrl,
@@ -45,8 +47,10 @@ describe("configuração do card de compartilhamento", () => {
     expect(configuracaoCard("whatsapp", "story")).not.toBeNull();
   });
 
-  it("reserva mais espaço para a descrição, especialmente no story", () => {
-    expect(configuracaoCard("whatsapp", "feed")!.descricaoMax).toBeGreaterThanOrEqual(400);
+  it("usa fonte maior na descrição do card do WhatsApp", () => {
+    const whatsapp = configuracaoCard("whatsapp", "feed")!;
+    expect(whatsapp.descricaoFonte).toBeGreaterThan(configuracaoCard("instagram", "story")!.descricaoFonte);
+    expect(whatsapp.descricaoMax).toBeGreaterThanOrEqual(360);
     expect(configuracaoCard("instagram", "feed")!.descricaoMax).toBeGreaterThanOrEqual(290);
     expect(configuracaoCard("instagram", "story")!.descricaoMax).toBeGreaterThanOrEqual(400);
   });
@@ -85,7 +89,7 @@ describe("URLs de compartilhamento", () => {
   it("inclui chamada para ação com link clicável na mensagem", () => {
     const links = shareLinks("https://exemplo.test/r/rifa", "Rifa da escola");
     expect(textoDoLink(links.whatsapp)).toContain(
-      "Rifa da escola\n\n👉 Clique aqui para ajudar e participar: https://exemplo.test/r/rifa"
+      `Rifa da escola\n\n${TEXTO_CTA}\nhttps://exemplo.test/r/rifa`
     );
   });
 
@@ -110,15 +114,21 @@ describe("URLs de compartilhamento", () => {
   it("monta texto e link com legenda e parâmetro para renovar a prévia", () => {
     const texto = textoComLink("https://exemplo.test/r/rifa", "Rifa da escola", 123);
     expect(texto).toContain(
-      "👉 Clique aqui para ajudar e participar: https://exemplo.test/r/rifa?wa=123"
+      `${TEXTO_CTA}\nhttps://exemplo.test/r/rifa?wa=123`
     );
   });
 
-  it("envia no WhatsApp apenas o CTA clicável, sem a legenda da imagem", () => {
+  it("envia o CTA como texto e a URL em separado no compartilhamento nativo", () => {
+    const nativo = compartilhamentoNativo("https://exemplo.test/r/rifa", 123);
+    expect(nativo.text).toBe("Clique aqui para ajudar!");
+    expect(nativo.url).toBe("https://exemplo.test/r/rifa?wa=123");
+    expect(nativo.text).not.toContain("http");
+  });
+
+  it("usa o CTA exato e separa a URL no fallback do WhatsApp", () => {
+    expect(TEXTO_CTA).toBe("Clique aqui para ajudar!");
     const texto = ctaComLink("https://exemplo.test/r/rifa", 123);
-    expect(texto).toBe(
-      "👉 Clique aqui para ajudar e participar: https://exemplo.test/r/rifa?wa=123"
-    );
+    expect(texto).toBe(`${TEXTO_CTA}\nhttps://exemplo.test/r/rifa?wa=123`);
     expect(textoDoLink(whatsappShareLink("https://exemplo.test/r/rifa", 123))).toBe(texto);
     expect(texto).not.toContain("Rifa da escola");
   });

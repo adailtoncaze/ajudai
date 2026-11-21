@@ -3,12 +3,14 @@ import { brl } from "./format";
 export type RedeSocial = "whatsapp" | "instagram" | "facebook";
 export type FormatoCard = "feed" | "story";
 
+export const TEXTO_CTA = "Clique aqui para ajudar!";
+
 export function shareLinks(url: string, text: string) {
   const u = encodeURIComponent(url);
   const mensagem = text.trim();
   return {
     whatsapp: `https://wa.me/?text=${encodeURIComponent(
-      mensagem ? `${mensagem}\n\n👉 Clique aqui para ajudar e participar: ${url}` : url
+      mensagem ? `${mensagem}\n\n${TEXTO_CTA}\n${url}` : url
     )}`,
     // O Instagram não tem URL de compartilhamento com link pré-preenchido.
     instagram: "https://www.instagram.com/",
@@ -35,29 +37,35 @@ export function legendaCard(dados: DadosLegenda) {
     .join("\n");
 }
 
-const CTA = "👉 Clique aqui para ajudar e participar";
-
-function linkComCacheBuster(url: string, agora: number) {
+/** URL com parâmetro único para forçar o WhatsApp a renovar a prévia da página. */
+export function urlComPartilha(url: string, agora = Date.now()) {
   const separador = url.includes("?") ? "&" : "?";
   return `${url}${separador}wa=${agora}`;
 }
 
-/** CTA curto com o link clicável, usado quando a imagem já mostra os detalhes da rifa. */
+/**
+ * Texto do fallback `wa.me`: CTA e URL. O WhatsApp só consegue abrir a rifa a partir
+ * da URL incluída no texto, então ela precisa aparecer nesse caso.
+ */
 export function ctaComLink(url: string, agora = Date.now()) {
-  return `${CTA}: ${linkComCacheBuster(url, agora)}`;
+  return `${TEXTO_CTA}\n${urlComPartilha(url, agora)}`;
+}
+
+/**
+ * Payload do compartilhamento nativo: o texto é só o CTA e a URL vai no campo `url`,
+ * para o WhatsApp exibi-la como link clicável sem mostrar o endereço na legenda.
+ */
+export function compartilhamentoNativo(url: string, agora = Date.now()) {
+  return { text: TEXTO_CTA, url: urlComPartilha(url, agora) };
 }
 
 /** Texto da mensagem: legenda, chamada para ação e URL clicável. */
 export function textoComLink(url: string, legenda = "", agora = Date.now()) {
-  const link = linkComCacheBuster(url, agora);
-  return legenda.trim() ? `${legenda.trim()}\n\n${CTA}: ${link}` : link;
+  const link = urlComPartilha(url, agora);
+  return legenda.trim() ? `${legenda.trim()}\n\n${TEXTO_CTA}\n${link}` : link;
 }
 
-/**
- * Link do WhatsApp com apenas o CTA e a URL da rifa. A imagem enviada como mídia já traz
- * título, descrição, prêmio e valor; o texto abaixo dela só precisa abrir a página.
- * O parâmetro único evita reaproveitar um preview antigo da mesma página.
- */
+/** Link do WhatsApp usado quando o navegador não suporta compartilhamento com arquivo. */
 export function whatsappShareLink(url: string, agora = Date.now()) {
   return `https://wa.me/?text=${encodeURIComponent(ctaComLink(url, agora))}`;
 }

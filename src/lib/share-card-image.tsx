@@ -346,7 +346,7 @@ function CardVertical({
           <div
             style={{
               color: COR.texto,
-              fontSize: 26,
+              fontSize: config.descricaoFonte,
               lineHeight: 1.34,
               marginTop: 18,
             }}
