@@ -68,14 +68,10 @@ export function compartilhamentoNativo(url: string, arquivo?: File, agora = Date
 
 /**
  * O Web Share com arquivo abre o Instagram como mensagem (Direct), não como Story.
- * Este deep link abre diretamente a câmera de Stories do app no celular.
+ * Link universal documentado pela Meta: abre o app na câmera/criador de Stories.
  */
-export function linkStoryInstagram(userAgent: string): string {
-  if (/iPhone|iPad|iPod/i.test(userAgent)) return "instagram://story-camera";
-  if (/Android/i.test(userAgent)) {
-    return "intent://story-camera#Intent;package=com.instagram.android;scheme=instagram;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.instagram.android;end";
-  }
-  return "https://www.instagram.com/";
+export function linkStoryInstagram(): string {
+  return "https://www.instagram.com/create/story/";
 }
 
 /** Marca o link para a prévia usar o card quadrado do Direct do Instagram. */

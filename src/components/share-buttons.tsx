@@ -161,41 +161,30 @@ export function ShareButtons({ dados, text }: Props) {
     );
   }
 
+  function prepararStoryInstagram() {
+    setAviso("");
+    // A navegação para o criador de Stories precisa ser o clique real no link.
+    void copiarTexto(dados.url);
+    baixarImagem(cardUrl, nomeArquivo);
+    setAviso(
+      "Card salvo e link copiado. Escolha o card na galeria e cole o link no adesivo da Story."
+    );
+  }
+
   async function compartilharInstagram() {
     setAviso("");
 
-    if (formato === "direct") {
-      if (typeof navigator === "undefined" || typeof navigator.share !== "function") {
-        setAviso("Seu navegador não oferece compartilhamento. Baixe o card para enviar no Direct.");
-        return;
-      }
-
-      try {
-        await navigator.share(compartilhamentoLink(urlComCardDirect(dados.url)));
-        setAviso("Escolha o Instagram e envie no Direct: o card vai como prévia do link.");
-      } catch (erro) {
-        if ((erro as { name?: string })?.name === "AbortError") return;
-        setAviso("Não foi possível abrir o compartilhamento. Baixe o card para enviar no Direct.");
-      }
+    if (typeof navigator === "undefined" || typeof navigator.share !== "function") {
+      setAviso("Seu navegador não oferece compartilhamento. Baixe o card para enviar no Direct.");
       return;
     }
 
-    // O Web Share com imagem sempre abre o Direct; para o Story usamos o deep link
-    // da câmera, com o card salvo e o endereço pronto para o adesivo de link.
     try {
-      await copiarTexto(dados.url);
-      baixarImagem(cardUrl, nomeArquivo);
-      const destino = linkStoryInstagram(navigator.userAgent);
-      if (destino.startsWith("https://")) {
-        window.open(destino, "_blank", "noopener,noreferrer");
-      } else {
-        window.location.href = destino;
-      }
-      setAviso(
-        "Card salvo e link copiado. Na câmera de Stories, escolha o card na galeria e cole o link no adesivo."
-      );
-    } catch {
-      setAviso("Não foi possível copiar o link. Use “Baixar card” para publicar no Story.");
+      await navigator.share(compartilhamentoLink(urlComCardDirect(dados.url)));
+      setAviso("Escolha o Instagram e envie no Direct: o card vai como prévia do link.");
+    } catch (erro) {
+      if ((erro as { name?: string })?.name === "AbortError") return;
+      setAviso("Não foi possível abrir o compartilhamento. Baixe o card para enviar no Direct.");
     }
   }
 
@@ -318,21 +307,27 @@ export function ShareButtons({ dados, text }: Props) {
                 </a>
               )}
 
-              {redeAtiva === "instagram" && (
-                <button
-                  type="button"
-                  onClick={compartilharInstagram}
-                  disabled={preparandoCard}
-                  className="ui-btn ui-btn-primary"
-                >
-                  <IconeRede rede="instagram" />
-                  {preparandoCard
-                    ? "Preparando card..."
-                    : formato === "direct"
-                      ? "Compartilhar no Direct"
-                      : "Abrir câmera do Story"}
-                </button>
-              )}
+              {redeAtiva === "instagram" &&
+                (formato === "direct" ? (
+                  <button
+                    type="button"
+                    onClick={compartilharInstagram}
+                    disabled={preparandoCard}
+                    className="ui-btn ui-btn-primary"
+                  >
+                    <IconeRede rede="instagram" />
+                    {preparandoCard ? "Preparando card..." : "Compartilha no instagram"}
+                  </button>
+                ) : (
+                  <a
+                    href={linkStoryInstagram()}
+                    onClick={prepararStoryInstagram}
+                    className="ui-btn ui-btn-primary"
+                  >
+                    <IconeRede rede="instagram" />
+                    Compartilha no instagram
+                  </a>
+                ))}
 
               <button type="button" onClick={baixarCard} className="ui-btn ui-btn-secondary">
                 <Download aria-hidden="true" size={18} />

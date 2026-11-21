@@ -143,16 +143,8 @@ describe("URLs de compartilhamento", () => {
     expect(nativo.text).toBe("Clique aqui para ajudar!");
   });
 
-  it("abre a câmera de Stories do Instagram no celular, sem passar pelo Direct", () => {
-    expect(linkStoryInstagram("Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)")).toBe(
-      "instagram://story-camera"
-    );
-    const android = linkStoryInstagram("Mozilla/5.0 (Linux; Android 15) Chrome/130");
-    expect(android).toContain("intent://story-camera#Intent;");
-    expect(android).toContain("package=com.instagram.android");
-    expect(linkStoryInstagram("Mozilla/5.0 (Windows NT 10.0)")).toBe(
-      "https://www.instagram.com/"
-    );
+  it("usa o link universal oficial para abrir o criador de Stories, sem passar pelo Direct", () => {
+    expect(linkStoryInstagram()).toBe("https://www.instagram.com/create/story/");
   });
 
   it("monta o link com o marcador do card do Direct e abre a folha nativa", () => {
