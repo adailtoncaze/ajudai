@@ -211,7 +211,7 @@ async function ConteudoRifa({ params }: Props) {
                   width={640}
                   height={360}
                   unoptimized
-                  className="h-44 w-full rounded-2xl border border-line-soft object-cover sm:h-48"
+                  className="h-44 w-full rounded-2xl border border-line-soft bg-brand-50 object-contain sm:h-48"
                 />
               </div>
             )}
