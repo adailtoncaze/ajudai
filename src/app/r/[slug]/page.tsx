@@ -202,7 +202,7 @@ async function ConteudoRifa({ params }: Props) {
 
       {(raffle.prize_title?.trim() || raffle.prize_image_url || raffle.prize_description.trim()) && (
         <section className="ui-card p-5 sm:p-7" aria-labelledby="premio-da-rifa">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+          <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-center sm:text-left">
             {raffle.prize_image_url && (
               <div className="w-48 shrink-0 rounded-2xl bg-brand-50 p-3 sm:w-56 sm:p-4">
                 <Image
