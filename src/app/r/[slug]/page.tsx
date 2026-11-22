@@ -209,9 +209,9 @@ async function ConteudoRifa({ params }: Props) {
                   src={raffle.prize_image_url}
                   alt={`Prêmio: ${raffle.prize_title?.trim() || raffle.title}`}
                   width={640}
-                  height={360}
+                  height={640}
                   unoptimized
-                  className="h-44 w-full rounded-2xl border border-line-soft bg-brand-50 object-contain sm:h-48"
+                  className="h-auto w-full rounded-2xl border border-line-soft"
                 />
               </div>
             )}
