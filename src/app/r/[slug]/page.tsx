@@ -221,7 +221,7 @@ async function ConteudoRifa({ params }: Props) {
                 {raffle.prize_title?.trim() || "O que será sorteado"}
               </h2>
               {raffle.prize_description.trim() && (
-                <p className="ui-text whitespace-pre-line">
+                <p className="ui-text whitespace-pre-line text-left">
                   {raffle.prize_description}
                 </p>
               )}
