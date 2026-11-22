@@ -3,34 +3,16 @@
 import { useEffect, useRef, useState, useTransition, type ReactNode } from "react";
 import Image from "next/image";
 import { criarRifa, editarRifa } from "@/app/painel/actions";
-import { createClient } from "@/lib/supabase/client";
 import {
-  centsToReaisInput,
-  isoToSaoPauloLocalInput,
-  validateImageFile,
-  type RaffleActionState,
-} from "@/lib/validation";
+  assinaturaFormulario,
+  valoresIniciaisFormulario,
+  type RaffleFormInitial,
+  type RaffleFormValues,
+} from "@/lib/raffle-form";
+import { createClient } from "@/lib/supabase/client";
+import { validateImageFile, type RaffleActionState } from "@/lib/validation";
 
-export type RaffleFormInitial = {
-  id: string;
-  title: string;
-  description: string;
-  organizer_name: string;
-  total_numbers: number;
-  price_cents: number;
-  pix_key: string;
-  pix_receiver_name: string;
-  pix_city: string;
-  reservation_hours: number;
-  ends_at: string | null;
-  image_url: string | null;
-  prize_title: string | null;
-  prize_image_url: string | null;
-  prize_description: string;
-  draw_date: string | null;
-  hasReservations: boolean;
-  status: string;
-};
+export type { RaffleFormInitial } from "@/lib/raffle-form";
 
 type Props = {
   userId: string;
@@ -73,6 +55,11 @@ function Campo({
 export function RaffleForm({ userId, mode, initial }: Props) {
   const [state, setState] = useState<RaffleActionState>(estadoInicial);
   const [pending, startTransition] = useTransition();
+  // Todos os campos são controlados: um `defaultValue` mantém o valor do primeiro
+  // render mesmo quando o servidor entrega dados novos (edição + navegação do router).
+  const [valores, setValores] = useState<RaffleFormValues>(() =>
+    valoresIniciaisFormulario(initial)
+  );
   const [preview, setPreview] = useState<string | null>(initial?.image_url ?? null);
   const [prizePreview, setPrizePreview] = useState<string | null>(initial?.prize_image_url ?? null);
   const [fileError, setFileError] = useState("");
@@ -80,6 +67,23 @@ export function RaffleForm({ userId, mode, initial }: Props) {
   const previewRef = useRef<string | null>(initial?.image_url ?? null);
   const prizePreviewRef = useRef<string | null>(initial?.prize_image_url ?? null);
   const locked = mode === "edit" && Boolean(initial?.hasReservations);
+
+  const assinaturaInicial = assinaturaFormulario(initial);
+  const assinaturaAplicada = useRef(assinaturaInicial);
+
+  useEffect(() => {
+    if (assinaturaAplicada.current === assinaturaInicial) return;
+    assinaturaAplicada.current = assinaturaInicial;
+
+    setValores(valoresIniciaisFormulario(initial));
+    setPreview(initial?.image_url ?? null);
+    setPrizePreview(initial?.prize_image_url ?? null);
+    previewRef.current = initial?.image_url ?? null;
+    prizePreviewRef.current = initial?.prize_image_url ?? null;
+    setFileError("");
+    setPrizeFileError("");
+    setState(estadoInicial);
+  }, [assinaturaInicial, initial]);
 
   useEffect(
     () => () => {
@@ -90,10 +94,14 @@ export function RaffleForm({ userId, mode, initial }: Props) {
     []
   );
 
+  function atualizar(campo: keyof RaffleFormValues, valor: string) {
+    setValores((anteriores) => ({ ...anteriores, [campo]: valor }));
+  }
+
   function aoEscolherImagem(evento: React.ChangeEvent<HTMLInputElement>, tipo: "rifa" | "premio") {
     const arquivo = evento.target.files?.[0];
     const ehPremio = tipo === "premio";
-    const atual = ehPremio ? initial?.prize_image_url ?? null : initial?.image_url ?? null;
+    const atual = ehPremio ? valores.prize_image_url || null : valores.image_url || null;
     const ref = ehPremio ? prizePreviewRef : previewRef;
     const definirErro = ehPremio ? setPrizeFileError : setFileError;
     const definirPreview = ehPremio ? setPrizePreview : setPreview;
@@ -165,14 +173,14 @@ export function RaffleForm({ userId, mode, initial }: Props) {
       }
     }
 
-    let imageUrl = initial?.image_url ?? "";
+    let imageUrl = valores.image_url;
     if (imagem instanceof File && imagem.size > 0) {
       const url = await enviarImagem(imagem);
       if (!url) return;
       imageUrl = url;
     }
 
-    let prizeImageUrl = initial?.prize_image_url ?? "";
+    let prizeImageUrl = valores.prize_image_url;
     if (imagemPremio instanceof File && imagemPremio.size > 0) {
       const url = await enviarImagem(imagemPremio);
       if (!url) return;
@@ -206,7 +214,8 @@ export function RaffleForm({ userId, mode, initial }: Props) {
             name="title"
             type="text"
             required
-            defaultValue={initial?.title ?? ""}
+            value={valores.title}
+            onChange={(evento) => atualizar("title", evento.target.value)}
             aria-invalid={Boolean(state.errors.title)}
             aria-describedby="title-error"
             className={inputClass}
@@ -218,7 +227,8 @@ export function RaffleForm({ userId, mode, initial }: Props) {
             id="description"
             name="description"
             rows={5}
-            defaultValue={initial?.description ?? ""}
+            value={valores.description}
+            onChange={(evento) => atualizar("description", evento.target.value)}
             aria-invalid={Boolean(state.errors.description)}
             aria-describedby="description-error"
             className={inputClass}
@@ -264,7 +274,8 @@ export function RaffleForm({ userId, mode, initial }: Props) {
             id="draw_date"
             name="draw_date"
             type="date"
-            defaultValue={initial?.draw_date ?? ""}
+            value={valores.draw_date}
+            onChange={(evento) => atualizar("draw_date", evento.target.value)}
             aria-invalid={Boolean(state.errors.draw_date)}
             aria-describedby="draw_date-error"
             className={inputClass}
@@ -277,7 +288,8 @@ export function RaffleForm({ userId, mode, initial }: Props) {
             name="organizer_name"
             type="text"
             required
-            defaultValue={initial?.organizer_name ?? ""}
+            value={valores.organizer_name}
+            onChange={(evento) => atualizar("organizer_name", evento.target.value)}
             aria-invalid={Boolean(state.errors.organizer_name)}
             aria-describedby="organizer_name-error"
             className={inputClass}
@@ -306,7 +318,8 @@ export function RaffleForm({ userId, mode, initial }: Props) {
               name="prize_title"
               type="text"
               maxLength={120}
-              defaultValue={initial?.prize_title ?? ""}
+              value={valores.prize_title}
+              onChange={(evento) => atualizar("prize_title", evento.target.value)}
               aria-invalid={Boolean(state.errors.prize_title)}
               aria-describedby="prize_title-error"
               className={inputClass}
@@ -353,7 +366,8 @@ export function RaffleForm({ userId, mode, initial }: Props) {
               name="prize_description"
               rows={4}
               maxLength={4000}
-              defaultValue={initial?.prize_description ?? ""}
+              value={valores.prize_description}
+              onChange={(evento) => atualizar("prize_description", evento.target.value)}
               aria-invalid={Boolean(state.errors.prize_description)}
               aria-describedby="prize_description-error"
               className={inputClass}
@@ -388,7 +402,8 @@ export function RaffleForm({ userId, mode, initial }: Props) {
               max={1000}
               required={!locked}
               disabled={locked}
-              defaultValue={initial?.total_numbers ?? 100}
+              value={valores.total_numbers}
+              onChange={(evento) => atualizar("total_numbers", evento.target.value)}
               aria-invalid={Boolean(state.errors.total_numbers)}
               aria-describedby="total_numbers-error"
               className={inputClass}
@@ -409,7 +424,8 @@ export function RaffleForm({ userId, mode, initial }: Props) {
               placeholder="0,00"
               required={!locked}
               disabled={locked}
-              defaultValue={initial ? centsToReaisInput(initial.price_cents) : ""}
+              value={valores.price_reais}
+              onChange={(evento) => atualizar("price_reais", evento.target.value)}
               aria-invalid={Boolean(state.errors.price_reais)}
               aria-describedby="price_reais-error"
               className={inputClass}
@@ -434,7 +450,8 @@ export function RaffleForm({ userId, mode, initial }: Props) {
             name="pix_key"
             type="text"
             required
-            defaultValue={initial?.pix_key ?? ""}
+            value={valores.pix_key}
+            onChange={(evento) => atualizar("pix_key", evento.target.value)}
             aria-invalid={Boolean(state.errors.pix_key)}
             aria-describedby="pix_key-error"
             className={inputClass}
@@ -449,7 +466,8 @@ export function RaffleForm({ userId, mode, initial }: Props) {
               type="text"
               required
               maxLength={25}
-              defaultValue={initial?.pix_receiver_name ?? ""}
+              value={valores.pix_receiver_name}
+              onChange={(evento) => atualizar("pix_receiver_name", evento.target.value)}
               aria-invalid={Boolean(state.errors.pix_receiver_name)}
               aria-describedby="pix_receiver_name-error"
               className={inputClass}
@@ -463,7 +481,8 @@ export function RaffleForm({ userId, mode, initial }: Props) {
               type="text"
               required
               maxLength={15}
-              defaultValue={initial?.pix_city ?? ""}
+              value={valores.pix_city}
+              onChange={(evento) => atualizar("pix_city", evento.target.value)}
               aria-invalid={Boolean(state.errors.pix_city)}
               aria-describedby="pix_city-error"
               className={inputClass}
@@ -493,7 +512,8 @@ export function RaffleForm({ userId, mode, initial }: Props) {
               min={1}
               max={720}
               required
-              defaultValue={initial?.reservation_hours ?? 48}
+              value={valores.reservation_hours}
+              onChange={(evento) => atualizar("reservation_hours", evento.target.value)}
               aria-invalid={Boolean(state.errors.reservation_hours)}
               aria-describedby="reservation_hours-error"
               className={inputClass}
@@ -505,7 +525,8 @@ export function RaffleForm({ userId, mode, initial }: Props) {
               id="ends_at"
               name="ends_at"
               type="datetime-local"
-              defaultValue={initial?.ends_at ? isoToSaoPauloLocalInput(initial.ends_at) : ""}
+              value={valores.ends_at}
+              onChange={(evento) => atualizar("ends_at", evento.target.value)}
               aria-invalid={Boolean(state.errors.ends_at)}
               aria-describedby="ends_at-error"
               className={inputClass}

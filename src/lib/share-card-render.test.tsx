@@ -54,6 +54,41 @@ it.each(variantes)("renderiza o card de %s (%s) sem data do sorteio", async (red
   expect(bytes.byteLength).toBeGreaterThan(0);
 }, 30000);
 
+it.each([
+  ["whatsapp", "direct"],
+  ["facebook", "direct"],
+] as const)("inclui a imagem do prêmio no card de %s", async (rede, formato) => {
+  const config = configuracaoCard(rede, formato)!;
+  const imagem = (cor: string) =>
+    `data:image/svg+xml;base64,${Buffer.from(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="${cor}"/></svg>`
+    ).toString("base64")}`;
+  const dados = {
+    titulo: "Rifa da escola",
+    descricao: "Participe e ajude!",
+    imagem: null,
+    premioTitulo: "Bicicleta",
+    precoCents: 1000,
+    drawDate: null,
+    config,
+  };
+
+  // Duas imagens diferentes precisam gerar cards diferentes. Se a foto do prêmio
+  // colapsasse no layout flex, ambos cairiam no mesmo placeholder e seriam iguais.
+  const primeira = new ImageResponse(
+    elementoCard({ ...dados, premioImagem: imagem("#00aa55") }),
+    { width: config.largura, height: config.altura }
+  );
+  const segunda = new ImageResponse(
+    elementoCard({ ...dados, premioImagem: imagem("#aa0055") }),
+    { width: config.largura, height: config.altura }
+  );
+
+  const bytesPrimeira = Buffer.from(await primeira.arrayBuffer());
+  const bytesSegunda = Buffer.from(await segunda.arrayBuffer());
+  expect(bytesPrimeira.equals(bytesSegunda)).toBe(false);
+}, 30000);
+
 describe("bilhetes da borda inferior", () => {
   it("gera números aleatórios, únicos e formatados com dois dígitos", () => {
     const numeros = numerosAleatorios(30);

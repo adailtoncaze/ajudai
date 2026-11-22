@@ -15,6 +15,8 @@ const arquivos = [
   "package.json",
   "package-lock.json",
   "src/app/api/raffles/[slug]/share-card/route.ts",
+  "src/lib/card-image.ts",
+  "src/lib/card-image.test.ts",
   "src/lib/share-card.ts",
   "src/lib/share-card-image.tsx",
   "src/lib/share-card.test.ts",
@@ -30,7 +32,12 @@ const arquivos = [
   "src/app/r/[slug]/reserva/[token]/page.tsx",
   "src/components/dashboard-shell.tsx",
   "src/components/logo.tsx",
+  "src/components/raffle-form.tsx",
   "src/components/site-footer.tsx",
+  "src/lib/pix.ts",
+  "src/lib/pix.test.ts",
+  "src/lib/raffle-form.ts",
+  "src/lib/raffle-form.test.ts",
 ];
 
 // `:(literal)` evita que colchetes de rotas dinâmicas sejam tratados como curinga do git.

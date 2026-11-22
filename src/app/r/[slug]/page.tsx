@@ -204,14 +204,14 @@ async function ConteudoRifa({ params }: Props) {
         <section className="ui-card p-5 sm:p-7" aria-labelledby="premio-da-rifa">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
             {raffle.prize_image_url && (
-              <div className="shrink-0 rounded-2xl bg-brand-50 p-2">
+              <div className="w-full shrink-0 rounded-2xl bg-brand-50 p-3 sm:w-72 sm:p-4">
                 <Image
                   src={raffle.prize_image_url}
                   alt={`Prêmio: ${raffle.prize_title?.trim() || raffle.title}`}
-                  width={320}
-                  height={240}
+                  width={640}
+                  height={360}
                   unoptimized
-                  className="h-40 w-full rounded-xl object-contain sm:h-32 sm:w-48"
+                  className="h-44 w-full rounded-2xl border border-line-soft object-cover sm:h-48"
                 />
               </div>
             )}

@@ -46,6 +46,26 @@ describe("normalizePixKey", () => {
     });
   });
 
+  it("reconhece telefone com DDD sem o DDI, com ou sem máscara", () => {
+    expect(normalizePixKey("(83) 99999-0000")).toEqual({
+      type: "phone",
+      key: "+5583999990000",
+    });
+    expect(normalizePixKey("83 99999-0000")).toEqual({
+      type: "phone",
+      key: "+5583999990000",
+    });
+    expect(normalizePixKey("83999990000")).toEqual({
+      type: "phone",
+      key: "+5583999990000",
+    });
+  });
+
+  it("não transforma CPF válido em telefone", () => {
+    expect(normalizePixKey("12345678909")).toEqual({ type: "cpf", key: "12345678909" });
+    expect(normalizePixKey("123.456.789-00")).toBeNull();
+  });
+
   it("reconhece chave aleatória (UUID), normalizando para minúsculas", () => {
     expect(normalizePixKey("123E4567-E89B-12D3-A456-426614174000")).toEqual({
       type: "random",

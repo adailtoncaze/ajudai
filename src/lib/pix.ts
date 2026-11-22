@@ -30,18 +30,55 @@ export function formatAmount(cents: number): string {
   return `${Math.floor(cents / 100)}.${String(cents % 100).padStart(2, "0")}`;
 }
 
+function digitoVerificador(base: string, pesoInicial: number): number {
+  let soma = 0;
+  for (let i = 0; i < base.length; i++) soma += Number(base[i]) * (pesoInicial - i);
+  const resto = soma % 11;
+  return resto < 2 ? 0 : 11 - resto;
+}
+
+/** CPF válido: usado para não confundir telefone com DDD (11 dígitos) e CPF. */
+function cpfValido(digitos: string): boolean {
+  if (!/^\d{11}$/.test(digitos) || /^(\d)\1{10}$/.test(digitos)) return false;
+  return (
+    digitoVerificador(digitos.slice(0, 9), 10) === Number(digitos[9]) &&
+    digitoVerificador(digitos.slice(0, 10), 11) === Number(digitos[10])
+  );
+}
+
+/** Chave de telefone no padrão do BACEN: `+55` + DDD + número (8 ou 9 dígitos). */
+function chaveTelefone(digitos: string): { type: "phone"; key: string } | null {
+  let numero = digitos;
+  if (/^55\d{10,11}$/.test(numero)) numero = numero.slice(2);
+  if (!/^\d{10,11}$/.test(numero)) return null;
+  const ddd = Number(numero.slice(0, 2));
+  if (ddd < 11 || ddd > 99) return null;
+  return { type: "phone", key: `+55${numero}` };
+}
+
 export function normalizePixKey(raw: string): { type: PixKeyType; key: string } | null {
   const v = raw.trim();
   if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v))
     return { type: "random", key: v.toLowerCase() };
   if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) && v.length <= 77)
     return { type: "email", key: v.toLowerCase() };
-  const compact = v.replace(/[\s().-]/g, "");
-  if (/^\+55\d{10,11}$/.test(compact)) return { type: "phone", key: compact };
-  const digits = v.replace(/[.\-/\s]/g, "");
-  if (/^\d{11}$/.test(digits)) return { type: "cpf", key: digits };
-  if (/^\d{14}$/.test(digits)) return { type: "cnpj", key: digits };
-  return null;
+
+  const digitos = v.replace(/\D/g, "");
+  // Pontos/barra indicam CPF/CNPJ; parênteses, "+" e hífen no fim indicam telefone.
+  const mascaraDocumento = /[./]/.test(v);
+  const mascaraTelefone = /[()+]/.test(v) || /-\d{4}$/.test(v);
+
+  if (mascaraDocumento) {
+    if (cpfValido(digitos)) return { type: "cpf", key: digitos };
+    if (/^\d{14}$/.test(digitos)) return { type: "cnpj", key: digitos };
+    return null;
+  }
+  if (mascaraTelefone || /^\+55\d{10,11}$/.test(v.replace(/[\s().-]/g, ""))) {
+    return chaveTelefone(digitos);
+  }
+  if (cpfValido(digitos)) return { type: "cpf", key: digitos };
+  if (/^\d{14}$/.test(digitos)) return { type: "cnpj", key: digitos };
+  return chaveTelefone(digitos);
 }
 
 export type PixInput = {

@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { imagemParaCard } from "@/lib/card-image";
 import { getPublicRaffle, publicSlugSchema } from "@/lib/raffles";
 import { configuracaoCard, descricaoParaCard, resumirTexto } from "@/lib/share-card";
 import { elementoCard } from "@/lib/share-card-image";
@@ -8,21 +9,6 @@ type Props = { params: Promise<{ slug: string }> };
 const headers = {
   "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=86400",
 };
-
-/** Só entrega imagens HTTP(S) de verdade: o gerador falharia com URLs quebradas. */
-async function imagemValida(url: string | null): Promise<string | null> {
-  if (!url || !/^https?:\/\//i.test(url)) return null;
-  try {
-    const resposta = await fetch(url, {
-      method: "HEAD",
-      signal: AbortSignal.timeout(3000),
-    });
-    const tipo = resposta.headers.get("content-type") ?? "";
-    return resposta.ok && tipo.startsWith("image/") ? url : null;
-  } catch {
-    return null;
-  }
-}
 
 export async function GET(request: Request, { params }: Props) {
   try {
@@ -42,8 +28,8 @@ export async function GET(request: Request, { params }: Props) {
     if (!rifa) return new Response("Rifa não encontrada", { status: 404 });
 
     const [imagem, premioImagem] = await Promise.all([
-      imagemValida(rifa.image_url),
-      imagemValida(rifa.prize_image_url),
+      imagemParaCard(rifa.image_url),
+      imagemParaCard(rifa.prize_image_url),
     ]);
 
     return new ImageResponse(

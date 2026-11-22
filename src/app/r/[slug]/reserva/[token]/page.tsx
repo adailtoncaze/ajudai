@@ -7,7 +7,7 @@ import { DeclarePaidButton } from "@/components/declare-paid-button";
 import { Logo } from "@/components/logo";
 import { PixPayment } from "@/components/pix-payment";
 import { brl, dateTime } from "@/lib/format";
-import { buildPixPayload } from "@/lib/pix";
+import { buildPixPayload, normalizePixKey } from "@/lib/pix";
 import { getReservationForPayment } from "@/lib/raffles";
 
 type Props = { params: Promise<{ slug: string; token: string }> };
@@ -48,8 +48,10 @@ async function Conteudo({ params }: Props) {
   let qrDataUrl: string | null = null;
   let payload: string | null = null;
   if (reserva.status === "pending") {
+    // Rifas cadastradas antes da correção podem ter a chave de telefone sem o +55.
+    const chavePix = normalizePixKey(reserva.raffle.pixKey)?.key ?? reserva.raffle.pixKey;
     payload = buildPixPayload({
-      key: reserva.raffle.pixKey,
+      key: chavePix,
       name: reserva.raffle.pixReceiverName,
       city: reserva.raffle.pixCity,
       amountCents: reserva.totalCents,
